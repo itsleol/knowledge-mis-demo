@@ -1,17 +1,15 @@
 # Knowledge Management MIS Demo
 
-这是一个面向《管理信息系统》课程汇报的知识管理系统 Demo。项目以 B/S 架构展示知识采集、分类审核、统一知识库检索、共享反馈、统计分析和系统维护流程，重点服务“系统开发与实施阶段”的课堂演示。
+## 技术栈
 
-## Tech Stack
+- 前端: React + Vite
+- 后端: Node.js + Express
+- 数据库: MongoDB + Mongoose
+- 验证: JWT
+- 上传: multer + local `server/uploads`
+- 部署: Docker Compose
 
-- Frontend: React + Vite
-- Backend: Node.js + Express
-- Database: MongoDB + Mongoose
-- Authentication: JWT
-- Upload: multer + local `server/uploads`
-- Deployment: Docker Compose
-
-## Project Structure
+## 项目结构
 
 ```text
 knowledge-mis-demo/
@@ -27,31 +25,28 @@ knowledge-mis-demo/
   CONTRIBUTING.md         Team collaboration guide
 ```
 
-## Team Collaboration With GitHub and Docker
+## 依托于Github与Docker的项目团队协作
 
-This project is designed for local Docker development across macOS and Windows. Team members only need Git and Docker Desktop to run the demo. MongoDB, Node.js dependencies, seed data, backend, and frontend are handled by Docker Compose.
-
-First-time setup:
+首次setup:
 
 ```bash
-git clone https://github.com/YOUR_ORG_OR_USER/knowledge-mis-demo.git
+git clone https://github.com/itsleol/knowledge-mis-demo.git
 cd knowledge-mis-demo
 docker compose up --build
 ```
 
-Daily update after the repository has already been cloned:
+项目已克隆至本地后的日常运行:
 
 ```bash
 git pull
 docker compose up --build
 ```
 
-Open:
+访问网页:
 
 - Frontend: <http://localhost:5173>
 - API health check: <http://localhost:5001/api/health>
 
-Do not commit local runtime files such as `.env`, `node_modules`, `dist`, `.DS_Store`, or uploaded files in `server/uploads`. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the branch and Pull Request workflow, and [GITHUB_SETUP.md](./GITHUB_SETUP.md) for first-time repository publishing.
 
 ## Demo Accounts
 
