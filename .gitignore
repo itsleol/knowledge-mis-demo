@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Build outputs
+dist/
+client/dist/
+server/dist/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+client/.env
+server/.env
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.example.json
+
+# Local uploads are demo/runtime data, not source code.
+server/uploads/*
+!server/uploads/.gitkeep
+
+# Docker and database local artifacts
+mongo_data/
+data/
+
+# Test and cache folders
+coverage/
+.cache/
+.vite/
