@@ -4,10 +4,7 @@ const { canManageKnowledge } = require("../utils");
 
 async function pendingReviews(req, res, next) {
   try {
-    const query = { status: "pending" };
-    if (req.user.role === "knowledge_manager") {
-      query.department = req.user.department._id || req.user.department;
-    }
+    const query = { status: "pending", department: req.user.department._id || req.user.department };
     const items = await Knowledge.find(query)
       .populate("category department creator", "name code email")
       .sort({ updatedAt: -1 });

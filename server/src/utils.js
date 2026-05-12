@@ -20,6 +20,9 @@ function requireKnowledgeFields(body) {
 function canReadKnowledge(user, knowledge) {
   if (user.role === "system_admin" || user.role === "decision_maker") return true;
   if (String(knowledge.creator?._id || knowledge.creator) === String(user._id)) return true;
+  if (user.role === "knowledge_manager") {
+    return String(knowledge.department?._id || knowledge.department) === String(user.department?._id || user.department);
+  }
   if (knowledge.status !== "approved") return false;
   if (knowledge.accessLevel === "public") return true;
   if (knowledge.accessLevel === "department") {
@@ -30,7 +33,6 @@ function canReadKnowledge(user, knowledge) {
 }
 
 function canManageKnowledge(user, knowledge) {
-  if (user.role === "system_admin") return true;
   if (user.role !== "knowledge_manager") return false;
   return String(knowledge.department?._id || knowledge.department) === String(user.department?._id || user.department);
 }

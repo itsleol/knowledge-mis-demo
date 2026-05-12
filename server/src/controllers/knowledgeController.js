@@ -3,6 +3,7 @@ const Category = require("../models/Category");
 const SearchLog = require("../models/SearchLog");
 const Feedback = require("../models/Feedback");
 const Favorite = require("../models/Favorite");
+const Review = require("../models/Review");
 const { parseTags, requireKnowledgeFields, canReadKnowledge, canManageKnowledge } = require("../utils");
 
 async function generateKnowledgeCode(categoryDoc) {
@@ -63,7 +64,19 @@ async function myKnowledge(req, res, next) {
     const items = await Knowledge.find({ creator: req.user._id })
       .populate("category department creator", "name code email")
       .sort({ updatedAt: -1 });
-    res.json({ items });
+    const latestReviews = await Review.find({ knowledgeId: { $in: items.map((item) => item._id) } })
+      .populate("reviewerId", "name role")
+      .sort({ reviewTime: -1 });
+    const reviewMap = new Map();
+    latestReviews.forEach((review) => {
+      const key = String(review.knowledgeId);
+      if (!reviewMap.has(key)) reviewMap.set(key, review);
+    });
+    const withReviews = items.map((item) => ({
+      ...item.toObject(),
+      latestReview: reviewMap.get(String(item._id)) || null
+    }));
+    res.json({ items: withReviews });
   } catch (error) {
     next(error);
   }
@@ -76,6 +89,7 @@ async function getKnowledge(req, res, next) {
     if (!canReadKnowledge(req.user, item)) return res.status(403).json({ message: "You cannot read this knowledge item." });
 
     const feedbacks = await Feedback.find({ knowledgeId: item._id }).populate("userId", "name role").sort({ createdAt: -1 });
+    const reviews = await Review.find({ knowledgeId: item._id }).populate("reviewerId", "name role").sort({ reviewTime: -1 });
     const favorite = await Favorite.findOne({ userId: req.user._id, knowledgeId: item._id });
     const similar = await Knowledge.find({
       _id: { $ne: item._id },
@@ -86,7 +100,7 @@ async function getKnowledge(req, res, next) {
       .limit(5)
       .sort({ viewCount: -1, averageRating: -1 });
 
-    res.json({ item, feedbacks, isFavorite: Boolean(favorite), similar });
+    res.json({ item, feedbacks, reviews, latestReview: reviews[0] || null, isFavorite: Boolean(favorite), similar });
   } catch (error) {
     next(error);
   }

@@ -31,12 +31,17 @@ export default function KnowledgeList() {
     setFilters((old) => ({ ...old, [key]: value }));
   }
 
+  function submitSearch(event) {
+    event.preventDefault();
+    load();
+  }
+
   return (
     <>
       <div className="page-title">
         <div><h1>知识库列表</h1><p>关键词、分类、标签、排序组合检索已发布知识。</p></div>
       </div>
-      <div className="toolbar">
+      <form className="toolbar" onSubmit={submitSearch}>
         <input placeholder="关键词" value={filters.keyword} onChange={(e) => update("keyword", e.target.value)} />
         <select value={filters.category} onChange={(e) => update("category", e.target.value)}>
           <option value="">全部分类</option>
@@ -48,10 +53,10 @@ export default function KnowledgeList() {
           <option value="views">按浏览量</option>
           <option value="rating">按评分</option>
         </select>
-        <button className="primary icon-text" onClick={() => load()}>
+        <button className="primary icon-text" type="submit">
           <Search size={16} /> 检索
         </button>
-      </div>
+      </form>
       {error && <div className="alert">{error}</div>}
       <div className="knowledge-grid">
         {items.map((item) => (

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Archive, Edit, Eye, Heart, MessageSquare } from "lucide-react";
-import { API_ORIGIN, api } from "../services/api";
+import { API_ORIGIN, api, roleLabels } from "../services/api";
 import StatusBadge from "../components/StatusBadge";
 
 export default function KnowledgeDetail({ user }) {
@@ -41,7 +41,7 @@ export default function KnowledgeDetail({ user }) {
   if (!data) return <div className="loading">正在加载知识详情...</div>;
 
   const { item } = data;
-  const canManage = user.role === "system_admin" || (user.role === "knowledge_manager" && item.department?._id === user.department?._id);
+  const canManage = user.role === "knowledge_manager" && item.department?._id === user.department?._id;
   const canEdit = canManage || (item.creator?._id === user.id && ["draft", "rejected"].includes(item.status));
 
   return (
@@ -59,6 +59,15 @@ export default function KnowledgeDetail({ user }) {
       </div>
       <article className="panel readable">
         <div className="meta-line"><StatusBadge status={item.status} /> <span><Eye size={14} /> {item.viewCount}</span> <span>评分 {item.averageRating || 0}</span></div>
+        {data.latestReview && ["rejected", "approved"].includes(item.status) && (
+          <div className={`review-summary review-summary-${data.latestReview.result}`}>
+            <strong>{data.latestReview.result === "rejected" ? "退回意见" : "审核意见"}</strong>
+            <p>{data.latestReview.comment || "无具体意见"}</p>
+            <small>
+              {data.latestReview.reviewerId?.name || "审核人"} · {new Date(data.latestReview.reviewTime).toLocaleString()}
+            </small>
+          </div>
+        )}
         <h2>摘要</h2>
         <p>{item.summary}</p>
         <h2>正文</h2>
@@ -81,7 +90,19 @@ export default function KnowledgeDetail({ user }) {
           {data.feedbacks.map((fb) => <div className="comment" key={fb._id}><strong>{fb.userId?.name}</strong><span>{fb.rating} 分</span><p>{fb.comment}</p></div>)}
         </div>
         <div className="panel">
-          <h2>相似知识推荐</h2>
+          <h2>审核记录</h2>
+          {data.reviews?.length ? data.reviews.map((review) => (
+            <div className={`audit-row audit-row-${review.result}`} key={review._id}>
+              <strong>{review.result === "approved" ? "审核通过" : "驳回修改"}</strong>
+              <span>{review.comment || "无具体意见"}</span>
+              <small>{review.reviewerId?.name} · {roleLabels[review.reviewerId?.role] || "审核人"} · {new Date(review.reviewTime).toLocaleString()}</small>
+            </div>
+          )) : <div className="empty">暂无审核记录</div>}
+        </div>
+      </div>
+      <div className="panel">
+        <h2>相似知识推荐</h2>
+        <div className="table-list">
           {data.similar.map((item) => <Link className="row-link" key={item._id} to={`/knowledge/${item._id}`}>{item.title}<small>浏览 {item.viewCount}</small></Link>)}
         </div>
       </div>

@@ -129,7 +129,7 @@ Open <http://localhost:5173>.
 1. Log in as `employee@example.com`.
 2. Open **新建知识**, create a knowledge item, upload an attachment if needed, then submit for review.
 3. Log in as `manager@example.com`.
-4. Open **待审核**, review the pending item, approve it.
+4. Open **待审核**, review only this manager's department pending items, then approve one item.
 5. Log in as employee or decision maker and open **知识库**, search the approved item by keyword/category/tag.
 6. Open the knowledge detail page, collect it, rate it, and add a comment.
 7. Log in as `decision@example.com`, open **统计分析 Dashboard**, view contribution ranking, hot knowledge, search keywords, and status distribution.
@@ -208,7 +208,7 @@ Main endpoints:
 
 - 用户与权限管理子系统: login, JWT middleware, RBAC route guards, **用户管理** page, `users` and `departments`.
 - 知识采集子系统: **新建/编辑知识**, draft save, submit for review, upload API, `knowledge.attachments`.
-- 知识分类与审核子系统: **分类与标签管理**, **待审核/审核详情**, `categories`, `reviews`, `knowledge.statusHistory`.
+- 知识分类与审核子系统: **分类与标签管理**, **待审核/审核详情**, `categories`, `reviews`, `knowledge.statusHistory`. Department knowledge managers review only their own department's pending knowledge; system administrators handle system maintenance rather than knowledge review.
 - 知识检索与推荐子系统: **知识库列表**, keyword/category/tag filters, hot knowledge ranking, similar recommendation by category or tag, `searchLogs`.
 - 知识共享与协作子系统: detail page comments, ratings, favorites, `feedbacks` and `favorites`.
 - 统计分析与系统管理子系统: **统计分析 Dashboard**, department contribution, hot topics, status distribution, **系统设置/备份模拟**.
@@ -263,7 +263,8 @@ Implementation design:
 - Seed data includes 4 departments, 8 users, 6 categories, 10 knowledge items, multiple statuses, feedbacks, favorites, search logs, and attachment metadata.
 - Four roles see different navigation and permissions.
 - Employees can create and submit knowledge.
-- Knowledge managers can approve or reject departmental pending knowledge.
+- Knowledge managers can approve or reject only their own department's pending knowledge.
+- System administrators manage users, departments, and maintenance pages, but do not perform knowledge review.
 - Approved knowledge is searchable and readable.
 - Users can favorite, rate, and comment.
 - Decision makers can view statistics.

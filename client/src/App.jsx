@@ -54,8 +54,8 @@ export default function App() {
           <Route path="/knowledge/:id/edit" element={<KnowledgeForm />} />
           <Route path="/mine" element={<MyKnowledge />} />
           <Route path="/favorites" element={<Favorites />} />
-          <Route path="/reviews" element={<Gate user={user} roles={["knowledge_manager", "system_admin"]}><ReviewList /></Gate>} />
-          <Route path="/reviews/:id" element={<Gate user={user} roles={["knowledge_manager", "system_admin"]}><ReviewDetail /></Gate>} />
+          <Route path="/reviews" element={<Gate user={user} roles={["knowledge_manager"]}><ReviewList /></Gate>} />
+          <Route path="/reviews/:id" element={<Gate user={user} roles={["knowledge_manager"]}><ReviewDetail /></Gate>} />
           <Route path="/categories" element={<Gate user={user} roles={["knowledge_manager", "system_admin"]}><CategoryManage /></Gate>} />
           <Route path="/users" element={<Gate user={user} roles={["system_admin"]}><UserManage /></Gate>} />
           <Route path="/analytics" element={<Gate user={user} roles={["knowledge_manager", "system_admin", "decision_maker"]}><Analytics /></Gate>} />

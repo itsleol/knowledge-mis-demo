@@ -32,7 +32,7 @@ export default function Dashboard({ user }) {
       <div className="quick-grid">
         <Link className="quick-card" to="/knowledge"><BookOpen />知识库检索</Link>
         {user.role !== "decision_maker" && <Link className="quick-card" to="/knowledge/new"><Search />提交知识</Link>}
-        {["knowledge_manager", "system_admin"].includes(user.role) && <Link className="quick-card" to="/reviews"><ClipboardCheck />审核任务</Link>}
+        {user.role === "knowledge_manager" && <Link className="quick-card" to="/reviews"><ClipboardCheck />审核任务</Link>}
         {canAnalytics && <Link className="quick-card" to="/analytics"><BarChart3 />统计分析</Link>}
       </div>
       {overview && (

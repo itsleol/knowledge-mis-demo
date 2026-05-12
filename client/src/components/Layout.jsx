@@ -21,7 +21,7 @@ const menu = [
   { to: "/knowledge/new", label: "新建知识", icon: PenSquare, roles: ["employee", "knowledge_manager", "system_admin"] },
   { to: "/mine", label: "我的知识", icon: Archive, roles: ["employee", "knowledge_manager", "system_admin"] },
   { to: "/favorites", label: "我的收藏", icon: Heart, roles: ["employee", "knowledge_manager", "system_admin", "decision_maker"] },
-  { to: "/reviews", label: "待审核", icon: ClipboardCheck, roles: ["knowledge_manager", "system_admin"] },
+  { to: "/reviews", label: "待审核", icon: ClipboardCheck, roles: ["knowledge_manager"] },
   { to: "/categories", label: "分类与标签", icon: FolderTree, roles: ["knowledge_manager", "system_admin"] },
   { to: "/users", label: "用户管理", icon: Users, roles: ["system_admin"] },
   { to: "/analytics", label: "统计分析", icon: BarChart3, roles: ["knowledge_manager", "system_admin", "decision_maker"] },
