@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { api, getToken } from "./services/api";
 import Layout from "./components/Layout";
+import LoadingState from "./components/LoadingState";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import KnowledgeList from "./pages/KnowledgeList";
@@ -34,7 +35,7 @@ export default function App() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="loading">正在连接知识管理系统...</div>;
+  if (loading) return <LoadingState text="正在连接知识管理系统..." />;
 
   return (
     <BrowserRouter>

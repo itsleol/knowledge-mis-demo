@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BarChart3, BookOpen, ClipboardCheck, Search } from "lucide-react";
 import { api, roleLabels } from "../services/api";
+import PageHeader from "../components/PageHeader";
+import DashboardWidget, { StatCard } from "../components/DashboardWidget";
 
 export default function Dashboard({ user }) {
   const [overview, setOverview] = useState(null);
@@ -23,28 +25,26 @@ export default function Dashboard({ user }) {
 
   return (
     <>
-      <div className="page-title">
-        <div>
-          <h1>首页 Dashboard</h1>
-          <p>{roleLabels[user.role]}工作台，展示知识生命周期的关键入口。</p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Workspace Dashboard"
+        title="首页 Dashboard"
+        description={`${roleLabels[user.role]}工作台，展示知识生命周期的关键入口。`}
+      />
       <div className="quick-grid">
-        <Link className="quick-card" to="/knowledge"><BookOpen />知识库检索</Link>
-        {user.role !== "decision_maker" && <Link className="quick-card" to="/knowledge/new"><Search />提交知识</Link>}
-        {user.role === "knowledge_manager" && <Link className="quick-card" to="/reviews"><ClipboardCheck />审核任务</Link>}
-        {canAnalytics && <Link className="quick-card" to="/analytics"><BarChart3 />统计分析</Link>}
+        <Link className="quick-card" to="/knowledge"><BookOpen /><div><strong>知识库检索</strong><span>搜索、筛选和阅读已发布知识</span></div></Link>
+        {user.role !== "decision_maker" && <Link className="quick-card" to="/knowledge/new"><Search /><div><strong>提交知识</strong><span>创建草稿并提交部门审核</span></div></Link>}
+        {user.role === "knowledge_manager" && <Link className="quick-card" to="/reviews"><ClipboardCheck /><div><strong>审核任务</strong><span>处理本部门待审核知识</span></div></Link>}
+        {canAnalytics && <Link className="quick-card" to="/analytics"><BarChart3 /><div><strong>统计分析</strong><span>查看知识资产与利用情况</span></div></Link>}
       </div>
       {overview && (
         <div className="metric-grid">
-          <div className="metric"><span>知识总数</span><strong>{overview.total}</strong></div>
-          <div className="metric"><span>已发布</span><strong>{overview.approved}</strong></div>
-          <div className="metric"><span>待审核</span><strong>{overview.pending}</strong></div>
-          <div className="metric"><span>总浏览量</span><strong>{overview.totalViews}</strong></div>
+          <StatCard label="知识总数" value={overview.total} detail="组织知识资产" />
+          <StatCard label="已发布" value={overview.approved} detail="可被检索复用" />
+          <StatCard label="待审核" value={overview.pending} detail="需要 manager 处理" />
+          <StatCard label="总浏览量" value={overview.totalViews} detail="知识利用情况" />
         </div>
       )}
-      <div className="panel">
-        <h2>热门知识推荐</h2>
+      <DashboardWidget title="热门知识推荐" description="按浏览量和评分排序，适合课堂演示知识复用效果。">
         <div className="table-list">
           {hot.map((item) => (
             <Link key={item._id} to={`/knowledge/${item._id}`} className="row-link">
@@ -53,7 +53,7 @@ export default function Dashboard({ user }) {
             </Link>
           ))}
         </div>
-      </div>
+      </DashboardWidget>
     </>
   );
 }

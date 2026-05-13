@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Archive, Edit, Eye, Heart, MessageSquare } from "lucide-react";
-import { API_ORIGIN, api, roleLabels } from "../services/api";
+import { api, roleLabels } from "../services/api";
 import StatusBadge from "../components/StatusBadge";
+import PageHeader from "../components/PageHeader";
+import Button from "../components/Button";
+import MetadataPanel, { MetadataItem } from "../components/MetadataPanel";
+import AttachmentList from "../components/AttachmentList";
 
 export default function KnowledgeDetail({ user }) {
   const { id } = useParams();
@@ -46,37 +50,45 @@ export default function KnowledgeDetail({ user }) {
 
   return (
     <>
-      <div className="page-title">
-        <div>
-          <h1>{item.title}</h1>
-          <p>{item.knowledgeCode} · {item.category?.name} · {item.department?.name}</p>
-        </div>
-        <div className="button-row">
-          <button className="ghost icon-text" onClick={favorite}><Heart size={16} />{data.isFavorite ? "取消收藏" : "收藏"}</button>
-          {canEdit && <Link className="button ghost icon-text" to={`/knowledge/${id}/edit`}><Edit size={16} />编辑</Link>}
-          {canManage && item.status !== "archived" && <button className="danger icon-text" onClick={archive}><Archive size={16} />归档</button>}
-        </div>
-      </div>
-      <article className="panel readable">
-        <div className="meta-line"><StatusBadge status={item.status} /> <span><Eye size={14} /> {item.viewCount}</span> <span>评分 {item.averageRating || 0}</span></div>
-        {data.latestReview && ["rejected", "approved"].includes(item.status) && (
-          <div className={`review-summary review-summary-${data.latestReview.result}`}>
-            <strong>{data.latestReview.result === "rejected" ? "退回意见" : "审核意见"}</strong>
-            <p>{data.latestReview.comment || "无具体意见"}</p>
-            <small>
-              {data.latestReview.reviewerId?.name || "审核人"} · {new Date(data.latestReview.reviewTime).toLocaleString()}
-            </small>
+      <PageHeader
+        eyebrow={item.knowledgeCode}
+        title={item.title}
+        description={`${item.category?.name || "未分类"} · ${item.department?.name || "未分配部门"}`}
+        actions={
+          <div className="button-row">
+            <Button variant="ghost" onClick={favorite}><Heart size={16} />{data.isFavorite ? "取消收藏" : "收藏"}</Button>
+            {canEdit && <Button as={Link} variant="ghost" to={`/knowledge/${id}/edit`}><Edit size={16} />编辑</Button>}
+            {canManage && item.status !== "archived" && <Button variant="danger" onClick={archive}><Archive size={16} />归档</Button>}
           </div>
-        )}
-        <h2>摘要</h2>
-        <p>{item.summary}</p>
-        <h2>正文</h2>
-        <p>{item.content}</p>
-        <h2>附件</h2>
-        <div className="attachments">
-          {item.attachments?.map((file) => <a key={file.fileName} href={`${API_ORIGIN}${file.path}`} target="_blank">{file.originalName}</a>)}
-        </div>
-      </article>
+        }
+      />
+      <div className="detail-layout">
+        <article className="panel readable">
+          {data.latestReview && ["rejected", "approved"].includes(item.status) && (
+            <div className={`review-summary review-summary-${data.latestReview.result}`}>
+              <strong>{data.latestReview.result === "rejected" ? "退回意见" : "审核意见"}</strong>
+              <p>{data.latestReview.comment || "无具体意见"}</p>
+              <small>{data.latestReview.reviewerId?.name || "审核人"} · {new Date(data.latestReview.reviewTime).toLocaleString()}</small>
+            </div>
+          )}
+          <h2>摘要</h2>
+          <p>{item.summary || "暂无摘要"}</p>
+          <h2>正文</h2>
+          <p>{item.content}</p>
+          <h2>附件</h2>
+          <AttachmentList files={item.attachments || []} />
+        </article>
+        <MetadataPanel title="知识元信息">
+          <MetadataItem label="状态"><StatusBadge status={item.status} /></MetadataItem>
+          <MetadataItem label="创建人">{item.creator?.name || "-"}</MetadataItem>
+          <MetadataItem label="部门">{item.department?.name || "-"}</MetadataItem>
+          <MetadataItem label="分类">{item.category?.name || "-"}</MetadataItem>
+          <MetadataItem label="版本">V{String(item.versionNo || 1).padStart(2, "0")}</MetadataItem>
+          <MetadataItem label="浏览量"><span className="meta-line"><Eye size={14} /> {item.viewCount || 0}</span></MetadataItem>
+          <MetadataItem label="平均评分">{item.averageRating || 0}</MetadataItem>
+          <MetadataItem label="标签"><div className="tags">{item.tags?.map((tag) => <span key={tag}>{tag}</span>)}</div></MetadataItem>
+        </MetadataPanel>
+      </div>
       <div className="split">
         <div className="panel">
           <h2>评分与评论</h2>
@@ -85,7 +97,7 @@ export default function KnowledgeDetail({ user }) {
               {[5, 4, 3, 2, 1].map((value) => <option key={value} value={value}>{value} 分</option>)}
             </select>
             <input value={comment} onChange={(e) => setComment(e.target.value)} placeholder="评论内容" />
-            <button className="primary icon-text"><MessageSquare size={16} />提交</button>
+            <Button variant="primary"><MessageSquare size={16} />提交</Button>
           </form>
           {data.feedbacks.map((fb) => <div className="comment" key={fb._id}><strong>{fb.userId?.name}</strong><span>{fb.rating} 分</span><p>{fb.comment}</p></div>)}
         </div>

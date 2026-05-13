@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Save, Send, Upload } from "lucide-react";
 import { api, accessLabels } from "../services/api";
+import PageHeader from "../components/PageHeader";
+import Button from "../components/Button";
+import FormField from "../components/FormField";
+import AttachmentList from "../components/AttachmentList";
 
 const empty = { title: "", summary: "", content: "", category: "", tags: "", accessLevel: "department", attachments: [] };
 
@@ -12,6 +16,7 @@ export default function KnowledgeForm() {
   const [categories, setCategories] = useState([]);
   const [errors, setErrors] = useState([]);
   const [message, setMessage] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     api("/categories").then((data) => setCategories(data.items));
@@ -36,10 +41,25 @@ export default function KnowledgeForm() {
   }
 
   async function uploadFiles(files) {
+    const selected = Array.from(files || []);
+    if (!selected.length) return;
+    setUploading(true);
+    setErrors([]);
     const body = new FormData();
-    Array.from(files).forEach((file) => body.append("files", file));
-    const data = await api("/uploads", { method: "POST", body });
-    update("attachments", [...form.attachments, ...data.items]);
+    selected.forEach((file) => body.append("files", file));
+    try {
+      const data = await api("/uploads", { method: "POST", body });
+      setForm((old) => ({ ...old, attachments: [...old.attachments, ...data.items] }));
+      setMessage(`已上传 ${data.items.length} 个附件。`);
+    } catch (err) {
+      setErrors([err.message || "附件上传失败"]);
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  function removeAttachment(index) {
+    setForm((old) => ({ ...old, attachments: old.attachments.filter((item, itemIndex) => itemIndex !== index) }));
   }
 
   function validate() {
@@ -71,38 +91,58 @@ export default function KnowledgeForm() {
 
   return (
     <>
-      <div className="page-title"><div><h1>{id ? "编辑知识" : "新建知识"}</h1><p>草稿可暂存，提交审核时执行必填校验。</p></div></div>
-      <div className="panel form-panel">
+      <PageHeader
+        eyebrow="Knowledge Editor"
+        title={id ? "编辑知识" : "新建知识"}
+        description="像撰写内部文档一样沉淀知识；草稿可暂存，提交审核时执行必填校验。"
+      />
+      <div className="panel form-panel knowledge-editor">
         {errors.length > 0 && <div className="alert">{errors.join("；")}</div>}
         {message && <div className="success">{message}</div>}
-        <label>标题</label>
-        <input value={form.title} onChange={(e) => update("title", e.target.value)} />
-        <label>摘要</label>
-        <textarea value={form.summary} onChange={(e) => update("summary", e.target.value)} />
-        <label>正文</label>
-        <textarea rows="9" value={form.content} onChange={(e) => update("content", e.target.value)} />
+        <FormField label="标题">
+          <input className="title-input" placeholder="输入知识标题" value={form.title} onChange={(e) => update("title", e.target.value)} />
+        </FormField>
+        <FormField label="摘要" helper="用于知识列表和搜索结果中快速理解内容。">
+          <textarea value={form.summary} onChange={(e) => update("summary", e.target.value)} />
+        </FormField>
+        <FormField label="正文">
+          <textarea className="content-textarea" rows="12" value={form.content} onChange={(e) => update("content", e.target.value)} />
+        </FormField>
         <div className="form-grid">
-          <div>
-            <label>分类</label>
+          <FormField label="分类">
             <select value={form.category} onChange={(e) => update("category", e.target.value)}>
               <option value="">请选择分类</option>
               {categories.map((c) => <option key={c._id} value={c._id}>{c.code} {c.name}</option>)}
             </select>
-          </div>
-          <div>
-            <label>访问级别</label>
+          </FormField>
+          <FormField label="访问级别">
             <select value={form.accessLevel} onChange={(e) => update("accessLevel", e.target.value)}>
               {Object.entries(accessLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
             </select>
-          </div>
+          </FormField>
         </div>
-        <label>标签，使用英文逗号分隔</label>
-        <input value={form.tags} onChange={(e) => update("tags", e.target.value)} />
-        <label className="file-label"><Upload size={16} /> 上传附件 <input type="file" multiple onChange={(e) => uploadFiles(e.target.files)} /></label>
-        <div className="attachments">{form.attachments.map((file) => <span key={file.fileName}>{file.originalName}</span>)}</div>
+        <FormField label="标签" helper="使用英文逗号分隔，例如：流程, 模板, 项目复盘">
+          <input value={form.tags} onChange={(e) => update("tags", e.target.value)} />
+        </FormField>
+        <label className="file-label">
+          <Upload size={18} />
+          {uploading ? "附件上传中..." : "上传附件"}
+          <span>支持 PDF、PPT、Word、图片、文本，单个文件最大 8MB</span>
+          <input
+            type="file"
+            multiple
+            accept=".pdf,.ppt,.pptx,.doc,.docx,.png,.jpg,.jpeg,.txt"
+            disabled={uploading}
+            onChange={(e) => {
+              uploadFiles(e.target.files);
+              e.target.value = "";
+            }}
+          />
+        </label>
+        <AttachmentList files={form.attachments} editable onRemove={removeAttachment} />
         <div className="button-row">
-          <button className="ghost icon-text" onClick={() => save("draft")}><Save size={16} />保存草稿</button>
-          <button className="primary icon-text" onClick={() => save("pending")}><Send size={16} />提交审核</button>
+          <Button variant="ghost" onClick={() => save("draft")}><Save size={16} />保存草稿</Button>
+          <Button variant="primary" onClick={() => save("pending")}><Send size={16} />提交审核</Button>
         </div>
       </div>
     </>

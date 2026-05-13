@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { Plus, Save, Trash2 } from "lucide-react";
 import { api } from "../services/api";
+import PageHeader from "../components/PageHeader";
+import Button from "../components/Button";
+import FormField from "../components/FormField";
+import DataTable from "../components/DataTable";
 
 const initial = { name: "", code: "", parentId: "", description: "" };
 
@@ -46,36 +50,63 @@ export default function CategoryManage() {
     setForm({ name: item.name, code: item.code, parentId: item.parentId?._id || "", description: item.description || "" });
   }
 
+  const roots = items.filter((item) => !item.parentId);
+  const childrenOf = (id) => items.filter((item) => item.parentId?._id === id);
+
   return (
     <>
-      <div className="page-title"><div><h1>分类与标签管理</h1><p>维护树状分类，标签由知识条目直接沉淀。</p></div></div>
+      <PageHeader
+        eyebrow="知识组织"
+        title="分类与标签管理"
+        description="维护树状分类，标签由知识条目直接沉淀，用于检索筛选与相似推荐。"
+      />
       <div className="split">
-        <form className="panel form-panel" onSubmit={save}>
-          <h2>{editing ? "编辑分类" : "新增分类"}</h2>
+        <form className="dashboard-widget form-panel" onSubmit={save}>
+          <div className="widget-header">
+            <h2>{editing ? "编辑分类" : "新增分类"}</h2>
+            <p>分类代码用于演示知识编码与数据库字段映射。</p>
+          </div>
           {error && <div className="alert">{error}</div>}
-          <label>分类名称</label><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-          <label>分类代码</label><input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} />
-          <label>上级分类</label>
-          <select value={form.parentId} onChange={(e) => setForm({ ...form, parentId: e.target.value })}>
-            <option value="">无</option>
-            {items.filter((item) => item._id !== editing).map((item) => <option key={item._id} value={item._id}>{item.code} {item.name}</option>)}
-          </select>
-          <label>说明</label><textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-          <button className="primary icon-text">{editing ? <Save size={16} /> : <Plus size={16} />}{editing ? "保存" : "新增"}</button>
+          <FormField label="分类名称"><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></FormField>
+          <FormField label="分类代码"><input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} /></FormField>
+          <FormField label="上级分类">
+            <select value={form.parentId} onChange={(e) => setForm({ ...form, parentId: e.target.value })}>
+              <option value="">无</option>
+              {items.filter((item) => item._id !== editing).map((item) => <option key={item._id} value={item._id}>{item.code} {item.name}</option>)}
+            </select>
+          </FormField>
+          <FormField label="说明"><textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></FormField>
+          <Button variant="primary">{editing ? <Save size={16} /> : <Plus size={16} />}{editing ? "保存分类" : "新增分类"}</Button>
         </form>
-        <div className="panel">
+        <section className="dashboard-widget">
+          <div className="widget-header">
+            <h2>分类体系</h2>
+            <p>用层级列表呈现组织知识结构，表格用于维护字段和操作。</p>
+          </div>
+          <div className="category-tree">
+            {roots.map((root) => (
+              <div className="category-node" key={root._id}>
+                <strong><span className="code-chip">{root.code}</span>{root.name}</strong>
+                {childrenOf(root._id).map((child) => (
+                  <span className="category-child" key={child._id}><span className="code-chip">{child.code}</span>{child.name}</span>
+                ))}
+              </div>
+            ))}
+          </div>
+          <DataTable>
           <table>
             <thead><tr><th>代码</th><th>名称</th><th>上级</th><th>操作</th></tr></thead>
             <tbody>
               {items.map((item) => (
                 <tr key={item._id}>
-                  <td>{item.code}</td><td>{item.name}</td><td>{item.parentId?.name || "-"}</td>
-                  <td className="actions"><button className="link-button" onClick={() => edit(item)}>编辑</button><button className="link-button danger-text" onClick={() => remove(item._id)}><Trash2 size={14} />删除</button></td>
+                  <td><span className="code-chip">{item.code}</span></td><td>{item.name}</td><td>{item.parentId?.name || "-"}</td>
+                  <td className="actions"><Button variant="link" onClick={() => edit(item)}>编辑</Button><Button variant="link" className="danger-text" onClick={() => remove(item._id)}><Trash2 size={14} />删除</Button></td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
+          </DataTable>
+        </section>
       </div>
     </>
   );

@@ -9,6 +9,12 @@
 - 上传: multer + local `server/uploads`
 - 部署: Docker Compose
 
+## UI Design Reference
+
+前端界面遵循根目录 [`DESIGN.md`](./DESIGN.md)。本项目的视觉方向是：以 Notion-inspired 的知识文档工作区作为主基调，以 Airtable-inspired 的结构化表格和筛选作为管理界面语言，并使用 MongoDB-inspired green 作为主操作色和成功状态色。
+
+本次 UI 重构将设计规范落到 `client/src/styles/tokens.css`、`client/src/styles/global.css` 和 `client/src/components/` 中，统一了颜色、字体、间距、圆角、阴影、按钮、卡片、状态标签、表格、表单、知识卡片、元信息面板和 Dashboard widget。界面没有复制 Notion、Airtable 或 MongoDB 的 logo、品牌资产、营销文案或官网布局，只借鉴适合课程 Demo 的产品体验原则。
+
 ## 项目结构
 
 ```text
