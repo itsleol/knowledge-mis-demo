@@ -48,9 +48,9 @@ docker compose up --build
 - API health check: <http://localhost:5001/api/health>
 
 
-## Demo Accounts
+## Demo账户
 
-All seeded accounts use `password123`.
+所有预设账户密码均为`password123`.
 
 | Role | Email |
 | --- | --- |
@@ -59,14 +59,14 @@ All seeded accounts use `password123`.
 | System Administrator | `admin@example.com` |
 | Decision Maker | `decision@example.com` |
 
-## Run With Docker Compose
+## Docker编译运行
 
 ```bash
 cd knowledge-mis-demo
 docker compose up --build
 ```
 
-Open:
+浏览器打开:
 
 - Frontend: <http://localhost:5173>
 - API health check: <http://localhost:5001/api/health>
@@ -93,7 +93,7 @@ docker compose down
 docker compose up --build
 ```
 
-## Run Locally
+## 本地运行
 
 Docker Compose is the recommended way for team development. The manual Node.js workflow below is optional and mainly useful for debugging.
 
@@ -124,16 +124,6 @@ npm run dev
 
 Open <http://localhost:5173>.
 
-## Demo Flow
-
-1. Log in as `employee@example.com`.
-2. Open **新建知识**, create a knowledge item, upload an attachment if needed, then submit for review.
-3. Log in as `manager@example.com`.
-4. Open **待审核**, review only this manager's department pending items, then approve one item.
-5. Log in as employee or decision maker and open **知识库**, search the approved item by keyword/category/tag.
-6. Open the knowledge detail page, collect it, rate it, and add a comment.
-7. Log in as `decision@example.com`, open **统计分析 Dashboard**, view contribution ranking, hot knowledge, search keywords, and status distribution.
-8. Log in as `admin@example.com`, open **用户管理** and **系统设置**, demonstrate RBAC and maintenance simulation.
 
 ## Login Troubleshooting
 
