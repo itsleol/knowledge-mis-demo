@@ -34,14 +34,14 @@ export default function Login({ onLogin }) {
   return (
     <div className="login-page">
       <section className="login-intro">
-        <span className="page-eyebrow">Management Information Systems Demo</span>
-        <h1>知识管理 MIS</h1>
-        <p>面向组织知识采集、审核、检索与复用的管理信息系统。用一个可运行原型展示从逻辑设计进入系统实施的完整闭环。</p>
+        <span className="page-eyebrow">Knowledge Management Systems for Enterprises</span>
+        <h1>企业知识管理系统</h1>
+        <p>统一沉淀组织知识，规范审核发布流程，提升检索与复用效率。</p>
         <div className="login-feature-list">
-          <div className="login-feature"><BookOpenCheck size={20} /><strong>知识沉淀</strong><span>草稿、附件、分类、标签和版本记录</span></div>
-          <div className="login-feature"><ClipboardCheck size={20} /><strong>部门审核</strong><span>manager 处理本部门待审核知识</span></div>
-          <div className="login-feature"><Search size={20} /><strong>检索复用</strong><span>关键词、分类、标签和热门推荐</span></div>
-          <div className="login-feature"><ShieldCheck size={20} /><strong>角色权限</strong><span>员工、经理、管理员、决策者分工明确</span></div>
+          <div className="login-feature"><BookOpenCheck size={20} /><strong>知识沉淀</strong><span>文档沉淀、附件管理、分类标签、版本追踪</span></div>
+          <div className="login-feature"><ClipboardCheck size={20} /><strong>流程审核</strong><span>部门审核、状态流转、审核意见、发布控制</span></div>
+          <div className="login-feature"><Search size={20} /><strong>检索复用</strong><span>全文搜索、分类筛选、标签导航、相似推荐</span></div>
+          <div className="login-feature"><ShieldCheck size={20} /><strong>角色权限</strong><span>分级访问、角色分工、部门隔离、管理可控</span></div>
         </div>
       </section>
       <form className="login-card" onSubmit={submit}>
