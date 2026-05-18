@@ -27,14 +27,14 @@ export default function Login({ onLogin }) {
       setToken(data.token);
       onLogin(data.user);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "账号或密码错误。");
     }
   }
 
   return (
     <div className="login-page">
       <section className="login-intro">
-        <span className="page-eyebrow">Knowledge Management Systems for Enterprises</span>
+        <span className="page-eyebrow">企业知识管理平台</span>
         <h1>企业知识管理系统</h1>
         <p>统一沉淀组织知识，规范审核发布流程，提升检索与复用效率。</p>
         <div className="login-feature-list">
@@ -46,19 +46,20 @@ export default function Login({ onLogin }) {
       </section>
       <form className="login-card" onSubmit={submit}>
         <h1>登录工作台</h1>
-        <p>选择一个演示账号进入对应角色视图。</p>
-        <FormField label="演示账号">
-          <select value={email} onChange={(e) => setEmail(e.target.value)}>
-            {accounts.map((item) => <option key={item}>{item}</option>)}
-          </select>
+        <FormField label="账号" className="login-field">
+          <input
+            list="common-login-accounts"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="username"
+          />
+          <datalist id="common-login-accounts">
+            {accounts.map((item) => <option key={item} value={item} />)}
+          </datalist>
         </FormField>
-        <FormField label="密码">
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <FormField label="密码" className="login-field">
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
         </FormField>
-        <div className="demo-accounts">
-          <strong>Demo accounts</strong>
-          <span>employee / manager / admin / decision，默认密码均为 password123。</span>
-        </div>
         {error && <div className="alert">{error}</div>}
         <Button variant="primary">
           <LogIn size={18} />

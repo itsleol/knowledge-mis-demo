@@ -92,7 +92,7 @@ export default function KnowledgeForm() {
   return (
     <>
       <PageHeader
-        eyebrow="Knowledge Editor"
+        eyebrow="知识编辑"
         title={id ? "编辑知识" : "新建知识"}
         description="像撰写内部文档一样沉淀知识；草稿可暂存，提交审核时执行必填校验。"
       />

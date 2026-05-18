@@ -42,4 +42,17 @@ async function updateUser(req, res, next) {
   }
 }
 
-module.exports = { listUsers, createUser, updateUser };
+async function deleteUser(req, res, next) {
+  try {
+    if (String(req.user._id) === String(req.params.id)) {
+      return res.status(400).json({ message: "不能删除当前登录账号。" });
+    }
+    const item = await User.findByIdAndDelete(req.params.id);
+    if (!item) return res.status(404).json({ message: "用户不存在。" });
+    res.json({ message: "用户已删除。" });
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { listUsers, createUser, updateUser, deleteUser };

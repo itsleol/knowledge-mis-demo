@@ -111,7 +111,7 @@ async function seedDemoData({ reset = false } = {}) {
   );
 
   await Review.insertMany([
-    { knowledgeId: knowledge[0]._id, reviewerId: user["admin@example.com"]._id, result: "approved", comment: "内容完整，可发布。" },
+    { knowledgeId: knowledge[0]._id, reviewerId: user["manager@example.com"]._id, result: "approved", comment: "内容完整，可发布。" },
     { knowledgeId: knowledge[1]._id, reviewerId: user["manager@example.com"]._id, result: "approved", comment: "模板适合研发部门使用。" },
     { knowledgeId: knowledge[2]._id, reviewerId: user["manager@example.com"]._id, result: "approved", comment: "复盘质量较高。" },
     { knowledgeId: knowledge[9]._id, reviewerId: user["service.manager@example.com"]._id, result: "rejected", comment: "问卷指标不完整，请补充。" }

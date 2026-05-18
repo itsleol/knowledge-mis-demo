@@ -26,8 +26,8 @@ export default function Dashboard({ user }) {
   return (
     <>
       <PageHeader
-        eyebrow="Workspace Dashboard"
-        title="首页 Dashboard"
+        eyebrow="工作台"
+        title="首页"
         description={`${roleLabels[user.role]}工作台，展示知识生命周期的关键入口。`}
       />
       <div className="quick-grid">
@@ -40,11 +40,11 @@ export default function Dashboard({ user }) {
         <div className="metric-grid">
           <StatCard label="知识总数" value={overview.total} detail="组织知识资产" />
           <StatCard label="已发布" value={overview.approved} detail="可被检索复用" />
-          <StatCard label="待审核" value={overview.pending} detail="需要 manager 处理" />
+          <StatCard label="待审核" value={overview.pending} detail="需要及时处理" />
           <StatCard label="总浏览量" value={overview.totalViews} detail="知识利用情况" />
         </div>
       )}
-      <DashboardWidget title="热门知识推荐" description="按浏览量和评分排序，适合课堂演示知识复用效果。">
+      <DashboardWidget title="热门知识推荐" description="按浏览量和评分排序，帮助快速发现高价值内容。">
         <div className="table-list">
           {hot.map((item) => (
             <Link key={item._id} to={`/knowledge/${item._id}`} className="row-link">

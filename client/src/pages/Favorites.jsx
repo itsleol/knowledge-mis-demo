@@ -26,7 +26,7 @@ export default function Favorites() {
       <PageHeader
         eyebrow="知识复用"
         title="我的收藏"
-        description="集中保存常用知识，方便在课程演示中体现知识共享与复用。"
+        description="集中保存常用知识，便于后续查阅和复用。"
         actions={<span className="badge-token badge-token-success"><Heart size={14} /> {items.length} 条收藏</span>}
       />
       <section className="dashboard-widget">

@@ -64,7 +64,6 @@ export default function CategoryManage() {
         <form className="dashboard-widget form-panel" onSubmit={save}>
           <div className="widget-header">
             <h2>{editing ? "编辑分类" : "新增分类"}</h2>
-            <p>分类代码用于演示知识编码与数据库字段映射。</p>
           </div>
           {error && <div className="alert">{error}</div>}
           <FormField label="分类名称"><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></FormField>

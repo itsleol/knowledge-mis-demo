@@ -41,7 +41,7 @@ export default function KnowledgeList() {
   return (
     <>
       <PageHeader
-        eyebrow="Knowledge Database"
+        eyebrow="知识库"
         title="知识库列表"
         description="像知识数据库一样检索、筛选和浏览已沉淀的组织知识。"
       />

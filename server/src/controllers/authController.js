@@ -18,17 +18,17 @@ async function login(req, res, next) {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required." });
+      return res.status(400).json({ message: "请输入账号和密码。" });
     }
 
     const user = await User.findOne({ email: email.toLowerCase() }).populate("department");
     if (!user || user.status !== "active") {
-      return res.status(401).json({ message: "Invalid email or password." });
+      return res.status(401).json({ message: "账号或密码错误。" });
     }
 
     const ok = await bcrypt.compare(password, user.passwordHash);
     if (!ok) {
-      return res.status(401).json({ message: "Invalid email or password." });
+      return res.status(401).json({ message: "账号或密码错误。" });
     }
 
     const token = jwt.sign({ id: user._id, role: user.role }, jwtSecret, { expiresIn: jwtExpiresIn });

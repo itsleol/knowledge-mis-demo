@@ -10,10 +10,10 @@ function parseTags(input) {
 
 function requireKnowledgeFields(body) {
   const errors = [];
-  if (!body.title || !String(body.title).trim()) errors.push("Title is required.");
-  if (!body.content || !String(body.content).trim()) errors.push("Content is required.");
-  if (!body.category) errors.push("Category is required.");
-  if (!body.accessLevel) errors.push("Access level is required.");
+  if (!body.title || !String(body.title).trim()) errors.push("请输入知识标题");
+  if (!body.content || !String(body.content).trim()) errors.push("请输入知识正文");
+  if (!body.category) errors.push("请选择知识分类");
+  if (!body.accessLevel) errors.push("请选择访问权限");
   return errors;
 }
 

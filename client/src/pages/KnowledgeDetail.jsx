@@ -30,7 +30,7 @@ export default function KnowledgeDetail({ user }) {
   }
 
   async function archive() {
-    await api(`/knowledge/${id}/archive`, { method: "POST", body: JSON.stringify({ comment: "Demo archive operation." }) });
+    await api(`/knowledge/${id}/archive`, { method: "POST", body: JSON.stringify({ comment: "知识归档操作。" }) });
     await load();
   }
 

@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   Archive,
   BarChart3,
@@ -52,6 +52,7 @@ const menuGroups = [
 
 export default function Layout({ user, onLogout }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const visibleGroups = menuGroups
     .map((group) => ({ ...group, items: group.items.filter((item) => item.roles.includes(user.role)) }))
     .filter((group) => group.items.length);
@@ -62,6 +63,13 @@ export default function Layout({ user, onLogout }) {
     navigate("/login");
   }
 
+  function isActive(item) {
+    const path = location.pathname;
+    if (item.to === "/") return path === "/";
+    if (item.to === "/knowledge") return path === "/knowledge" || /^\/knowledge\/[a-f0-9]{24}$/i.test(path);
+    return path === item.to || path.startsWith(`${item.to}/`);
+  }
+
   return (
     <div className="shell">
       <aside className="sidebar">
@@ -69,7 +77,7 @@ export default function Layout({ user, onLogout }) {
           <div className="brand-mark"><ShieldCheck size={22} /></div>
           <div>
             <strong>知识管理 MIS</strong>
-            <span>Knowledge Workspace</span>
+            <span>组织知识工作台</span>
           </div>
         </div>
         <nav className="nav">
@@ -79,10 +87,10 @@ export default function Layout({ user, onLogout }) {
               {group.items.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <NavLink key={item.to} to={item.to} className={({ isActive }) => (isActive ? "active" : "")}>
+                  <Link key={item.to} to={item.to} className={isActive(item) ? "active" : ""}>
                     <Icon size={18} />
                     {item.label}
-                  </NavLink>
+                  </Link>
                 );
               })}
             </div>

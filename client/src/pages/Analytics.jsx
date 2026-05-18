@@ -30,7 +30,7 @@ export default function Analytics() {
     <>
       <PageHeader
         eyebrow="决策分析"
-        title="统计分析 Dashboard"
+        title="统计分析"
         description="面向管理层输出知识资产规模、利用率、部门贡献和检索热点。"
       />
       <div className="metric-grid">
@@ -53,7 +53,7 @@ export default function Analytics() {
         <DashboardWidget title="热门知识 Top 5" description="按浏览量与评分呈现知识复用热点。">
           {hot.map((item) => <div className="rank-row" key={item._id}><strong>{item.title}</strong><span>浏览 {item.viewCount} · 评分 {item.averageRating}</span></div>)}
         </DashboardWidget>
-        <DashboardWidget title="高频搜索词 Top 10" description="从 searchLogs 中汇总用户检索需求。">
+        <DashboardWidget title="高频搜索词 Top 10" description="汇总用户检索需求，辅助优化知识分类和内容建设。">
           {keywords.map((item) => <div className="rank-row" key={item.keyword}><strong>{item.keyword}</strong><span>{item.count} 次</span></div>)}
         </DashboardWidget>
       </div>

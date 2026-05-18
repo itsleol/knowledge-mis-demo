@@ -130,6 +130,33 @@ npm run dev
 
 Open <http://localhost:5173>.
 
+## 自动化测试
+
+后端 API 集成测试使用 Node.js 内置 `node:test`，直接启动 Express app 并连接独立测试库 `km_mis_test`。测试会在开始前创建自己的部门、用户、分类和知识数据，并在结束后清理测试 collections，不会清空演示数据库。
+
+推荐在 Docker 环境中运行：
+
+```bash
+docker compose up -d mongo server
+docker compose exec server npm test
+```
+
+本地运行：
+
+```bash
+cd knowledge-mis-demo/server
+npm install
+npm test
+```
+
+如需指定测试库：
+
+```bash
+MONGO_URI_TEST=mongodb://127.0.0.1:27017/km_mis_test npm test
+```
+
+当前测试覆盖登录、当前用户、知识草稿创建、提交审核校验、部门管理员审核通过/驳回、权限拒绝、知识检索、浏览量、评分均值、收藏/取消收藏、系统管理员用户管理和部门级统计过滤。更多说明见 [`docs/TESTING.md`](./docs/TESTING.md)。
+
 
 ## 登录失败问题排查方案
 
@@ -180,7 +207,7 @@ Main endpoints:
 - `GET /api/favorites/me`
 - `GET/POST/PUT/DELETE /api/categories`
 - `GET/POST/PUT/DELETE /api/departments`
-- `GET/POST/PUT /api/users`
+- `GET/POST/PUT/DELETE /api/users`
 - `GET /api/analytics/overview`
 - `GET /api/analytics/departments`
 - `GET /api/analytics/hot-knowledge`
@@ -219,6 +246,20 @@ Main endpoints:
   -> 用户搜索、查看、收藏
   -> 用户评分评论
   -> 管理员更新版本或归档
+```
+
+推荐课堂演示路径:
+
+```text
+employee@example.com 登录
+  -> 新建知识并保存草稿
+  -> 故意缺字段提交，展示输入校验
+  -> 补全后提交审核
+  -> manager@example.com 登录并审核通过
+  -> 普通用户在知识库检索已发布知识
+  -> 打开详情，评分、评论、收藏
+  -> decision@example.com 查看统计分析
+  -> admin@example.com 查看用户管理和系统设置
 ```
 
 数据流映射:
