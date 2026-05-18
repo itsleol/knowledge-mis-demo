@@ -17,6 +17,7 @@ export async function api(path, options = {}) {
 
   const res = await fetch(`${API_BASE}${path}`, {
     ...options,
+    cache: options.cache || "no-store",
     headers: { ...headers, ...(options.headers || {}) }
   });
   const data = await res.json().catch(() => ({}));

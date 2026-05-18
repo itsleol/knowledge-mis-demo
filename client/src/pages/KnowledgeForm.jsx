@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Save, Send, Upload } from "lucide-react";
+import { FileText, Save, Send, Upload } from "lucide-react";
 import { api, accessLabels } from "../services/api";
 import PageHeader from "../components/PageHeader";
 import Button from "../components/Button";
@@ -8,6 +8,51 @@ import FormField from "../components/FormField";
 import AttachmentList from "../components/AttachmentList";
 
 const empty = { title: "", summary: "", content: "", category: "", tags: "", accessLevel: "department", attachments: [] };
+
+const templates = [
+  {
+    name: "项目复盘模板",
+    content: `## 背景
+
+## 项目目标
+
+## 关键过程
+
+## 问题与原因
+
+## 经验沉淀
+
+## 后续行动`
+  },
+  {
+    name: "培训资料模板",
+    content: `## 培训对象
+
+## 学习目标
+
+## 内容结构
+
+## 操作步骤
+
+## 注意事项
+
+## 相关附件`
+  },
+  {
+    name: "制度文档模板",
+    content: `## 制度目的
+
+## 适用范围
+
+## 职责分工
+
+## 流程要求
+
+## 例外处理
+
+## 附件说明`
+  }
+];
 
 export default function KnowledgeForm() {
   const { id } = useParams();
@@ -17,6 +62,7 @@ export default function KnowledgeForm() {
   const [errors, setErrors] = useState([]);
   const [message, setMessage] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState(templates[0].name);
 
   useEffect(() => {
     api("/categories").then((data) => setCategories(data.items));
@@ -72,6 +118,15 @@ export default function KnowledgeForm() {
     return next.length === 0;
   }
 
+  function insertTemplate() {
+    const template = templates.find((item) => item.name === selectedTemplate);
+    if (!template) return;
+    const current = form.content.trim();
+    if (current && !window.confirm("正文已有内容，是否将模板追加到当前正文末尾？")) return;
+    update("content", current ? `${form.content.trim()}\n\n${template.content}` : template.content);
+    setMessage(`已插入${template.name}。`);
+  }
+
   async function save(status = "draft") {
     setErrors([]);
     setMessage("");
@@ -105,6 +160,21 @@ export default function KnowledgeForm() {
         <FormField label="摘要" helper="用于知识列表和搜索结果中快速理解内容。">
           <textarea value={form.summary} onChange={(e) => update("summary", e.target.value)} />
         </FormField>
+        <div className="template-panel">
+          <div className="template-copy">
+            <FileText size={18} />
+            <div>
+              <strong>知识模板</strong>
+              <span>选择常用结构，快速补齐正文框架。</span>
+            </div>
+          </div>
+          <div className="template-controls">
+            <select value={selectedTemplate} onChange={(e) => setSelectedTemplate(e.target.value)}>
+              {templates.map((item) => <option key={item.name} value={item.name}>{item.name}</option>)}
+            </select>
+            <Button variant="secondary" type="button" onClick={insertTemplate}>插入模板</Button>
+          </div>
+        </div>
         <FormField label="正文">
           <textarea className="content-textarea" rows="12" value={form.content} onChange={(e) => update("content", e.target.value)} />
         </FormField>

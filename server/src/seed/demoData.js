@@ -1,4 +1,6 @@
 const bcrypt = require("bcryptjs");
+const fs = require("fs");
+const path = require("path");
 const Department = require("../models/Department");
 const User = require("../models/User");
 const Category = require("../models/Category");
@@ -7,8 +9,39 @@ const Review = require("../models/Review");
 const Feedback = require("../models/Feedback");
 const SearchLog = require("../models/SearchLog");
 const Favorite = require("../models/Favorite");
+const { uploadDir } = require("../config");
 
 const password = "password123";
+const seedKnowledgeCodes = [
+  "K03-260426-001",
+  "K04-260426-002",
+  "K02-260426-003",
+  "K05-260426-004",
+  "K06-260426-005",
+  "K04-260426-006",
+  "K02-260426-007",
+  "K01-260426-008",
+  "K03-260426-009",
+  "K05-260426-010"
+];
+
+function writeSeedAttachment(name) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+  const baseName = path.parse(name).name;
+  const fileName = `seed-${baseName}.txt`;
+  const content = [
+    `知识管理 MIS seed 附件占位文件`,
+    `文件名：${fileName}`,
+    `用途：用于课堂演示附件预览和下载流程。`,
+    `说明：真实项目中这里会保存用户上传的 PDF、Word、PPT 或图片。`
+  ].join("\n");
+  fs.writeFileSync(path.join(uploadDir, fileName), content, "utf8");
+  return { fileName, content };
+}
+
+function ensureSeedAttachmentFiles() {
+  seedKnowledgeCodes.forEach((code) => writeSeedAttachment(code));
+}
 
 async function resetDemoData() {
   await Promise.all([
@@ -28,7 +61,10 @@ async function seedDemoData({ reset = false } = {}) {
     await resetDemoData();
   } else {
     const users = await User.countDocuments();
-    if (users > 0) return { skipped: true, users };
+    if (users > 0) {
+      ensureSeedAttachmentFiles();
+      return { skipped: true, users };
+    }
   }
 
   const depts = await Department.insertMany([
@@ -62,14 +98,18 @@ async function seedDemoData({ reset = false } = {}) {
   ]);
   const cat = Object.fromEntries(categories.map((item) => [item.code, item]));
 
-  const attachment = (name, type = "application/pdf", size = 245760) => ({
-    originalName: name,
-    fileName: `seed-${name}`,
-    type,
-    size,
-    path: `/uploads/seed-${name}`,
-    uploadedAt: new Date()
-  });
+  function attachment(name) {
+    const baseName = path.parse(name).name;
+    const { fileName, content } = writeSeedAttachment(name);
+    return {
+      originalName: `${baseName}.txt`,
+      fileName,
+      type: "text/plain",
+      size: Buffer.byteLength(content),
+      path: `/uploads/${fileName}`,
+      uploadedAt: new Date()
+    };
+  }
 
   const rows = [
     ["K03-260426-001", "新人入职培训材料整理规范", "统一新员工培训材料的收集、审核和发布方式。", "培训资料由 HR 发起，部门知识管理员补充岗位相关内容，发布后供新员工检索学习。", cat.C03, ["培训", "入职", "制度"], user["hr.employee@example.com"], dept.D01, "approved", 96, 4.6],
@@ -92,7 +132,7 @@ async function seedDemoData({ reset = false } = {}) {
       content,
       category: category._id,
       tags,
-      attachments: [index % 2 === 0 ? attachment(`${knowledgeCode}.pdf`) : attachment(`${knowledgeCode}.pptx`, "application/vnd.openxmlformats-officedocument.presentationml.presentation", 530000)],
+      attachments: [attachment(knowledgeCode)],
       creator: creator._id,
       department: department._id,
       status,

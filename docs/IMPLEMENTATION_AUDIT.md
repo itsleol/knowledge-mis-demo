@@ -299,3 +299,22 @@ fail 0
 - 独立 Tag collection 或完整标签 CRUD
 - 真实备份脚本
 - 前端组件测试和 Playwright E2E
+
+## Round 3 Hardening Notes
+
+第三轮系统完善处理了部分低风险 P2 和演示级稳定性工作：
+
+- 已新增 `GET /api/tags/summary`，基于现有 `knowledge.tags` 聚合标签使用次数和最近使用时间，不新增独立 Tag collection，不修改 MongoDB schema。
+- 已在分类与标签管理页增加“标签汇总”视图，点击标签可进入知识库按标签筛选。
+- 已在知识新建/编辑页增加轻量静态模板：项目复盘模板、培训资料模板、制度文档模板，用于展示“模板套用”的采集辅助能力。
+- 已调整 seed 附件策略：seed 脚本会生成真实 `.txt` 占位文件，使 seed 附件路径可访问，避免课堂演示中出现 404。
+- 已新增前端 smoke 测试 `client/tests/smoke.test.js` 和 `npm run test:smoke`，用于验证 Vite SPA 关键路由入口可访问。
+- 已新增 `docs/DEMO_SCRIPT.md` 和 `docs/RELEASE_CHECKLIST.md`，补强课堂展示路径和展示前检查流程。
+
+第三轮仍保留为未来扩展的项目：
+
+- 完整 Playwright 浏览器 E2E。当前 client Docker 服务使用 Alpine 镜像，安装 Chromium 系统依赖会显著增加环境复杂度，因此本轮采用后端 API 集成测试 + 前端 smoke + 手工演示脚本组合。
+- 完整批量导入。
+- 多人实时协作和 WebSocket。
+- 独立 Tag collection 与完整标签 CRUD。
+- 真实生产级备份脚本和恢复流程。

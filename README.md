@@ -15,6 +15,17 @@
 
 本次 UI 重构将设计规范落到 `client/src/styles/tokens.css`、`client/src/styles/global.css` 和 `client/src/components/` 中，统一了颜色、字体、间距、圆角、阴影、按钮、卡片、状态标签、表格、表单、知识卡片、元信息面板和 Dashboard widget。界面没有复制 Notion、Airtable 或 MongoDB 的 logo、品牌资产、营销文案或官网布局，只借鉴适合课程 Demo 的产品体验原则。
 
+## Round 3 Demo Hardening
+
+第三轮完善聚焦演示级加固和轻量 P2：
+
+- 新增 `GET /api/tags/summary`，基于 `knowledge.tags` 聚合标签使用次数，不新增 Tag collection。
+- 分类与标签管理页新增“标签汇总”，点击标签可跳转知识库按标签筛选。
+- 新建/编辑知识页新增三个静态知识模板：项目复盘、培训资料、制度文档。
+- seed 脚本会生成真实 `.txt` 附件占位文件，避免 seed 附件点击 404。
+- 新增前端 smoke 检查命令，验证关键前端路由可访问。
+- 新增 [`docs/DEMO_SCRIPT.md`](./docs/DEMO_SCRIPT.md) 和 [`docs/RELEASE_CHECKLIST.md`](./docs/RELEASE_CHECKLIST.md)，用于课堂演示和展示前检查。
+
 ## 项目结构
 
 ```text
@@ -137,8 +148,10 @@ Open <http://localhost:5173>.
 推荐在 Docker 环境中运行：
 
 ```bash
-docker compose up -d mongo server
-docker compose exec server npm test
+docker compose up -d mongo server client
+docker compose exec -T server npm test
+docker compose exec -T client npm run test:smoke
+docker compose exec -T client npm run build
 ```
 
 本地运行：
@@ -156,6 +169,8 @@ MONGO_URI_TEST=mongodb://127.0.0.1:27017/km_mis_test npm test
 ```
 
 当前测试覆盖登录、当前用户、知识草稿创建、提交审核校验、部门管理员审核通过/驳回、权限拒绝、知识检索、浏览量、评分均值、收藏/取消收藏、系统管理员用户管理和部门级统计过滤。更多说明见 [`docs/TESTING.md`](./docs/TESTING.md)。
+
+前端 smoke 检查使用 Node.js 内置测试工具访问 Vite SPA 的关键路由入口。完整 Playwright 浏览器 E2E 因当前 Docker client 服务使用 Alpine 镜像，浏览器依赖较重，暂保留为后续扩展；课堂展示前可按 [`docs/DEMO_SCRIPT.md`](./docs/DEMO_SCRIPT.md) 进行手工浏览器验证。
 
 
 ## 登录失败问题排查方案
@@ -213,6 +228,7 @@ Main endpoints:
 - `GET /api/analytics/hot-knowledge`
 - `GET /api/analytics/search-keywords`
 - `POST /api/uploads`
+- `GET /api/tags/summary`
 
 ## MongoDB Collections
 

@@ -35,6 +35,7 @@ app.use("/api/departments", require("./routes/departmentRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/analytics", require("./routes/analyticsRoutes"));
 app.use("/api/uploads", require("./routes/uploadRoutes"));
+app.use("/api/tags", require("./routes/tagRoutes"));
 
 app.use(notFound);
 app.use(errorHandler);

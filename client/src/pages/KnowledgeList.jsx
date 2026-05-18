@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Search } from "lucide-react";
 import { api } from "../services/api";
 import Empty from "../components/Empty";
@@ -8,9 +9,11 @@ import Button from "../components/Button";
 import SearchFilterBar from "../components/SearchFilterBar";
 
 export default function KnowledgeList() {
+  const [searchParams] = useSearchParams();
+  const initialTag = searchParams.get("tag") || "";
   const [items, setItems] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [filters, setFilters] = useState({ keyword: "", category: "", tag: "", status: "", sort: "updated" });
+  const [filters, setFilters] = useState({ keyword: "", category: "", tag: initialTag, status: "", sort: "updated" });
   const [error, setError] = useState("");
 
   async function load(next = filters) {

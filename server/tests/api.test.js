@@ -310,3 +310,32 @@ test("knowledge_manager analytics are limited to the manager department", async 
   assert.equal(hot.data.items.length, 1);
   assert.equal(hot.data.items[0].title, "本部门已发布");
 });
+
+test("tag summary aggregates approved knowledge tags and respects manager department scope", async () => {
+  const employeeToken = await login("employee.test@example.com");
+  const managerToken = await login("manager.test@example.com");
+
+  await createKnowledge({ title: "标签测试 A", tags: ["流程", "模板"], status: "approved", department: seed.deptA._id });
+  await createKnowledge({ title: "标签测试 B", tags: ["流程", "经验"], status: "approved", department: seed.deptA._id });
+  await createKnowledge({
+    title: "其他部门标签测试",
+    tags: ["流程", "跨部门"],
+    status: "approved",
+    creator: seed.otherManager._id,
+    department: seed.deptB._id
+  });
+  await createKnowledge({ title: "未发布标签不计入", tags: ["草稿标签"], status: "pending", department: seed.deptA._id });
+
+  const employeeSummary = await request("/tags/summary", { token: employeeToken });
+  assert.equal(employeeSummary.res.status, 200);
+  const flowTag = employeeSummary.data.items.find((item) => item.tag === "流程");
+  assert.equal(flowTag.count, 3);
+  assert.ok(employeeSummary.data.items.some((item) => item.tag === "跨部门"));
+  assert.ok(!employeeSummary.data.items.some((item) => item.tag === "草稿标签"));
+
+  const managerSummary = await request("/tags/summary", { token: managerToken });
+  assert.equal(managerSummary.res.status, 200);
+  const managerFlowTag = managerSummary.data.items.find((item) => item.tag === "流程");
+  assert.equal(managerFlowTag.count, 2);
+  assert.ok(!managerSummary.data.items.some((item) => item.tag === "跨部门"));
+});

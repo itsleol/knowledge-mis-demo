@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Plus, Save, Trash2 } from "lucide-react";
 import { api } from "../services/api";
 import PageHeader from "../components/PageHeader";
@@ -13,10 +14,15 @@ export default function CategoryManage() {
   const [form, setForm] = useState(initial);
   const [editing, setEditing] = useState(null);
   const [error, setError] = useState("");
+  const [tags, setTags] = useState([]);
 
   async function load() {
-    const data = await api("/categories");
+    const [data, tagData] = await Promise.all([
+      api("/categories"),
+      api("/tags/summary")
+    ]);
     setItems(data.items);
+    setTags(tagData.items || []);
   }
 
   useEffect(() => { load(); }, []);
@@ -58,7 +64,7 @@ export default function CategoryManage() {
       <PageHeader
         eyebrow="知识组织"
         title="分类与标签管理"
-        description="维护树状分类，标签由知识条目直接沉淀，用于检索筛选与相似推荐。"
+        description="维护树状分类，并汇总知识条目中已经沉淀的高频标签。"
       />
       <div className="split">
         <form className="dashboard-widget form-panel" onSubmit={save}>
@@ -77,35 +83,53 @@ export default function CategoryManage() {
           <FormField label="说明"><textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></FormField>
           <Button variant="primary">{editing ? <Save size={16} /> : <Plus size={16} />}{editing ? "保存分类" : "新增分类"}</Button>
         </form>
-        <section className="dashboard-widget">
-          <div className="widget-header">
-            <h2>分类体系</h2>
-            <p>用层级列表呈现组织知识结构，表格用于维护字段和操作。</p>
-          </div>
-          <div className="category-tree">
-            {roots.map((root) => (
-              <div className="category-node" key={root._id}>
-                <strong><span className="code-chip">{root.code}</span>{root.name}</strong>
-                {childrenOf(root._id).map((child) => (
-                  <span className="category-child" key={child._id}><span className="code-chip">{child.code}</span>{child.name}</span>
-                ))}
-              </div>
-            ))}
-          </div>
-          <DataTable>
-          <table>
-            <thead><tr><th>代码</th><th>名称</th><th>上级</th><th>操作</th></tr></thead>
-            <tbody>
-              {items.map((item) => (
-                <tr key={item._id}>
-                  <td><span className="code-chip">{item.code}</span></td><td>{item.name}</td><td>{item.parentId?.name || "-"}</td>
-                  <td className="actions"><Button variant="link" onClick={() => edit(item)}>编辑</Button><Button variant="link" className="danger-text" onClick={() => remove(item._id)}><Trash2 size={14} />删除</Button></td>
-                </tr>
+        <div className="stack">
+          <section className="dashboard-widget">
+            <div className="widget-header">
+              <h2>分类体系</h2>
+            </div>
+            <div className="category-tree">
+              {roots.map((root) => (
+                <div className="category-node" key={root._id}>
+                  <strong><span className="code-chip">{root.code}</span>{root.name}</strong>
+                  {childrenOf(root._id).map((child) => (
+                    <span className="category-child" key={child._id}><span className="code-chip">{child.code}</span>{child.name}</span>
+                  ))}
+                </div>
               ))}
-            </tbody>
-          </table>
-          </DataTable>
-        </section>
+            </div>
+            <DataTable>
+            <table>
+              <thead><tr><th>代码</th><th>名称</th><th>上级</th><th>操作</th></tr></thead>
+              <tbody>
+                {items.map((item) => (
+                  <tr key={item._id}>
+                    <td><span className="code-chip">{item.code}</span></td><td>{item.name}</td><td>{item.parentId?.name || "-"}</td>
+                    <td className="actions"><Button variant="link" onClick={() => edit(item)}>编辑</Button><Button variant="link" className="danger-text" onClick={() => remove(item._id)}><Trash2 size={14} />删除</Button></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            </DataTable>
+          </section>
+
+          <section className="dashboard-widget">
+            <div className="widget-header">
+              <h2>标签汇总</h2>
+              <p>标签来自知识条目的标签字段，用于检索筛选和相似知识推荐。</p>
+            </div>
+            <div className="tag-summary-grid">
+              {tags.map((item) => (
+                <Link className="tag-summary-card" key={item.tag} to={`/knowledge?tag=${encodeURIComponent(item.tag)}`}>
+                  <span className="tag-chip">{item.tag}</span>
+                  <strong>{item.count}</strong>
+                  <small>{item.lastUsedAt ? new Date(item.lastUsedAt).toLocaleDateString("zh-CN") : "-"}</small>
+                </Link>
+              ))}
+            </div>
+            {!tags.length && <p className="muted-text">暂无标签数据。</p>}
+          </section>
+        </div>
       </div>
     </>
   );
