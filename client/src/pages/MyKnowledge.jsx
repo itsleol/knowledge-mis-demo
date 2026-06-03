@@ -33,14 +33,12 @@ export default function MyKnowledge() {
       <PageHeader
         eyebrow="个人工作台"
         title="我的知识"
-        description="查看草稿、待审核、退回和已发布知识，退回意见会同步显示在列表中。"
         actions={<Button as={Link} to="/knowledge/new" variant="primary">新建知识</Button>}
       />
       {error && <div className="alert">{error}</div>}
       <section className="dashboard-widget">
         <div className="widget-header">
-          <h2>知识生命周期</h2>
-          <p>草稿和退回内容可继续编辑，完整后再次提交部门知识管理员审核。</p>
+          <h2>知识列表</h2>
         </div>
         <DataTable>
         <table>

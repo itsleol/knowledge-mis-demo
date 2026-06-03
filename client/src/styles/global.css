@@ -871,6 +871,20 @@ button {
   justify-content: flex-end;
 }
 
+.template-controls select {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.template-insert-button {
+  width: 128px;
+  min-width: 128px;
+  white-space: nowrap;
+  word-break: keep-all;
+  overflow-wrap: normal;
+  flex: 0 0 auto;
+}
+
 .file-label {
   border: 1px dashed var(--color-hairline-strong);
   border-radius: var(--radius-lg);
@@ -907,6 +921,29 @@ button {
 
 .table-action-cell {
   text-align: right;
+  white-space: nowrap;
+}
+
+.category-table th:nth-child(4),
+.category-table td:nth-child(4) {
+  width: 164px;
+  text-align: left;
+}
+
+.category-table .table-action-cell {
+  display: table-cell;
+  border-bottom: 1px solid var(--color-hairline-soft);
+}
+
+.category-table .actions {
+  display: inline-flex;
+  width: 100%;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: var(--space-sm);
+}
+
+.category-table .btn-link {
   white-space: nowrap;
 }
 

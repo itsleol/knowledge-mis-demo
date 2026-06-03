@@ -46,7 +46,6 @@ export default function KnowledgeList() {
       <PageHeader
         eyebrow="知识库"
         title="知识库列表"
-        description="像知识数据库一样检索、筛选和浏览已沉淀的组织知识。"
       />
       <SearchFilterBar onSubmit={submitSearch}>
         <input placeholder="关键词" value={filters.keyword} onChange={(e) => update("keyword", e.target.value)} />

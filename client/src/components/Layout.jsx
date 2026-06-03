@@ -32,13 +32,13 @@ const menuGroups = [
     title: "审核管理",
     items: [
       { to: "/reviews", label: "待审核", icon: ClipboardCheck, roles: ["knowledge_manager"] },
-      { to: "/categories", label: "分类与标签", icon: FolderTree, roles: ["knowledge_manager", "system_admin"] }
+      { to: "/categories", label: "分类与标签", icon: FolderTree, roles: ["knowledge_manager"] }
     ]
   },
   {
     title: "统计分析",
     items: [
-      { to: "/analytics", label: "统计分析", icon: BarChart3, roles: ["knowledge_manager", "system_admin", "decision_maker"] }
+      { to: "/analytics", label: "统计分析", icon: BarChart3, roles: ["knowledge_manager", "decision_maker"] }
     ]
   },
   {

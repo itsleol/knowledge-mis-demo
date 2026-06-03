@@ -149,7 +149,6 @@ export default function KnowledgeForm() {
       <PageHeader
         eyebrow="知识编辑"
         title={id ? "编辑知识" : "新建知识"}
-        description="像撰写内部文档一样沉淀知识；草稿可暂存，提交审核时执行必填校验。"
       />
       <div className="panel form-panel knowledge-editor">
         {errors.length > 0 && <div className="alert">{errors.join("；")}</div>}
@@ -165,14 +164,13 @@ export default function KnowledgeForm() {
             <FileText size={18} />
             <div>
               <strong>知识模板</strong>
-              <span>选择常用结构，快速补齐正文框架。</span>
             </div>
           </div>
           <div className="template-controls">
             <select value={selectedTemplate} onChange={(e) => setSelectedTemplate(e.target.value)}>
               {templates.map((item) => <option key={item.name} value={item.name}>{item.name}</option>)}
             </select>
-            <Button variant="secondary" type="button" onClick={insertTemplate}>插入模板</Button>
+            <Button className="template-insert-button" variant="secondary" type="button" onClick={insertTemplate}>插入模板</Button>
           </div>
         </div>
         <FormField label="正文">

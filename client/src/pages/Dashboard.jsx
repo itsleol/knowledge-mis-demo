@@ -8,7 +8,7 @@ import DashboardWidget, { StatCard } from "../components/DashboardWidget";
 export default function Dashboard({ user }) {
   const [overview, setOverview] = useState(null);
   const [hot, setHot] = useState([]);
-  const canAnalytics = ["knowledge_manager", "system_admin", "decision_maker"].includes(user.role);
+  const canAnalytics = ["knowledge_manager", "decision_maker"].includes(user.role);
 
   useEffect(() => {
     if (!canAnalytics) {
@@ -28,7 +28,6 @@ export default function Dashboard({ user }) {
       <PageHeader
         eyebrow="工作台"
         title="首页"
-        description={`${roleLabels[user.role]}工作台，展示知识生命周期的关键入口。`}
       />
       <div className="quick-grid">
         <Link className="quick-card" to="/knowledge"><BookOpen /><div><strong>知识库检索</strong><span>搜索、筛选和阅读已发布知识</span></div></Link>
@@ -44,7 +43,7 @@ export default function Dashboard({ user }) {
           <StatCard label="总浏览量" value={overview.totalViews} detail="知识利用情况" />
         </div>
       )}
-      <DashboardWidget title="热门知识推荐" description="按浏览量和评分排序，帮助快速发现高价值内容。">
+      <DashboardWidget title="热门知识推荐">
         <div className="table-list">
           {hot.map((item) => (
             <Link key={item._id} to={`/knowledge/${item._id}`} className="row-link">

@@ -64,7 +64,6 @@ export default function CategoryManage() {
       <PageHeader
         eyebrow="知识组织"
         title="分类与标签管理"
-        description="维护树状分类，并汇总知识条目中已经沉淀的高频标签。"
       />
       <div className="split">
         <form className="dashboard-widget form-panel" onSubmit={save}>
@@ -98,14 +97,19 @@ export default function CategoryManage() {
                 </div>
               ))}
             </div>
-            <DataTable>
+            <DataTable className="category-table">
             <table>
               <thead><tr><th>代码</th><th>名称</th><th>上级</th><th>操作</th></tr></thead>
               <tbody>
                 {items.map((item) => (
                   <tr key={item._id}>
                     <td><span className="code-chip">{item.code}</span></td><td>{item.name}</td><td>{item.parentId?.name || "-"}</td>
-                    <td className="actions"><Button variant="link" onClick={() => edit(item)}>编辑</Button><Button variant="link" className="danger-text" onClick={() => remove(item._id)}><Trash2 size={14} />删除</Button></td>
+                    <td className="table-action-cell">
+                      <div className="actions">
+                        <Button variant="link" onClick={() => edit(item)}>编辑</Button>
+                        <Button variant="link" className="danger-text" onClick={() => remove(item._id)}><Trash2 size={14} />删除</Button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -116,7 +120,6 @@ export default function CategoryManage() {
           <section className="dashboard-widget">
             <div className="widget-header">
               <h2>标签汇总</h2>
-              <p>标签来自知识条目的标签字段，用于检索筛选和相似知识推荐。</p>
             </div>
             <div className="tag-summary-grid">
               {tags.map((item) => (

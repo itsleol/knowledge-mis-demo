@@ -138,7 +138,7 @@ export default function UserManage() {
 
   return (
     <>
-      <PageHeader eyebrow="系统管理" title="用户管理" description="维护账号、角色、状态和部门信息。" />
+      <PageHeader eyebrow="系统管理" title="用户管理" />
       {error && <div className="alert">{error}</div>}
       {message && <div className="success">{message}</div>}
 

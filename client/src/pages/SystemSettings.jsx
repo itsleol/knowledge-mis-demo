@@ -4,18 +4,17 @@ import PageHeader from "../components/PageHeader";
 import DashboardWidget, { StatCard } from "../components/DashboardWidget";
 
 export default function SystemSettings() {
-  const [logs, setLogs] = useState(["系统设置页记录维护、备份和日志审计流程。"]);
+  const [logs, setLogs] = useState(["暂无维护记录"]);
 
   function simulate(action) {
-    setLogs((old) => [`${new Date().toLocaleString()} · ${action} 已完成模拟操作`, ...old]);
+    setLogs((old) => [`${new Date().toLocaleString()} · ${action} 已记录`, ...old.filter((item) => item !== "暂无维护记录")]);
   }
 
   return (
     <>
       <PageHeader
-        eyebrow="系统实施"
-        title="系统设置 / 备份模拟"
-        description="体现系统开发实施阶段的运行维护、权限审计和备份恢复方案。"
+        eyebrow="系统管理"
+        title="系统设置"
       />
       <div className="metric-grid">
         <StatCard label="服务状态" value="运行中" detail="Express / React / MongoDB" />
@@ -23,11 +22,11 @@ export default function SystemSettings() {
         <StatCard label="审计范围" value="登录与操作" detail="记录关键管理动作" />
       </div>
       <div className="quick-grid">
-        <button className="quick-card" onClick={() => simulate("全量备份")}><DatabaseBackup /><strong>全量备份</strong><span>模拟导出数据库与本地上传附件目录。</span></button>
-        <button className="quick-card" onClick={() => simulate("权限策略检查")}><ShieldCheck /><strong>权限检查</strong><span>检查角色菜单、审核边界和系统管理入口。</span></button>
+        <button className="quick-card" onClick={() => simulate("全量备份")}><DatabaseBackup /><strong>全量备份</strong><span>导出数据库与附件目录。</span></button>
+        <button className="quick-card" onClick={() => simulate("权限策略检查")}><ShieldCheck /><strong>权限检查</strong><span>检查角色菜单与权限边界。</span></button>
         <button className="quick-card" onClick={() => simulate("系统维护窗口")}><Wrench /><strong>维护窗口</strong><span>记录维护时间和处理动作。</span></button>
       </div>
-      <DashboardWidget title="系统运行日志" description="维护动作会写入本页日志，便于追踪系统管理过程。">
+      <DashboardWidget title="系统运行日志">
         {logs.map((log, index) => <div className="log-line" key={`${log}-${index}`}>{log}</div>)}
       </DashboardWidget>
     </>

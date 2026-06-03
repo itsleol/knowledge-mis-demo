@@ -20,13 +20,11 @@ export default function ReviewList() {
       <PageHeader
         eyebrow="审核管理"
         title="待审核知识"
-        description="部门知识管理员只处理本部门提交内容，审核通过后知识进入统一知识库。"
         actions={<span className="badge-token badge-token-warning"><Clock3 size={14} /> {items.length} 项待处理</span>}
       />
       <section className="dashboard-widget">
         <div className="widget-header">
           <h2>审核任务队列</h2>
-          <p>优先查看提交人、部门与更新时间，进入详情后完成通过或驳回。</p>
         </div>
         <DataTable>
         <table>
