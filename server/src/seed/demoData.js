@@ -30,10 +30,10 @@ function writeSeedAttachment(name) {
   const baseName = path.parse(name).name;
   const fileName = `seed-${baseName}.txt`;
   const content = [
-    `知识管理 MIS seed 附件占位文件`,
+    `知识管理系统附件占位文件`,
     `文件名：${fileName}`,
-    `用途：用于课堂演示附件预览和下载流程。`,
-    `说明：真实项目中这里会保存用户上传的 PDF、Word、PPT 或图片。`
+    `用途：用于附件预览和下载流程。`,
+    `说明：实际业务中这里会保存用户上传的 PDF、Word、PPT 或图片。`
   ].join("\n");
   fs.writeFileSync(path.join(uploadDir, fileName), content, "utf8");
   return { fileName, content };
@@ -69,6 +69,79 @@ async function synchronizeKnowledgeCounters() {
   })));
 }
 
+async function sanitizeDemoKnowledgeTitles() {
+  const replacements = [
+    {
+      match: { title: "11" },
+      update: {
+        title: "供应商合同归档规范",
+        summary: "统一供应商合同归档、命名和权限管理要求。",
+        content: "合同归档需包含合同编号、供应商名称、签署日期、关键条款、责任部门和附件清单，便于后续检索和审计。"
+      }
+    },
+    {
+      match: { title: "1" },
+      update: {
+        title: "跨部门项目周会纪要规范",
+        summary: "规范项目周会纪要结构，提升跨部门协同效率。",
+        content: "会议纪要应包含议题、结论、负责人、截止时间、风险提醒和后续跟进项，并在项目分类下统一沉淀。"
+      }
+    },
+    {
+      match: { title: "CRM 二期项目复盘" },
+      update: {
+        content: "复盘围绕需求确认、测试验收、用户培训、上线支持四个阶段展开，为后续数字化项目实施提供参考。"
+      }
+    },
+    {
+      match: { title: "月度知识利用率看板说明" },
+      update: {
+        summary: "解释经营分析看板的指标口径。",
+        content: "指标包括知识总量、已发布数量、浏览量、收藏量、评分均值和高频搜索词。",
+        tags: ["统计", "指标", "经营分析"]
+      }
+    },
+    {
+      match: { title: "知识库命名规则草稿" },
+      update: {
+        content: "草稿：K + 分类码 + 日期码 + 三位流水号，便于知识归档、检索追踪和版本管理。"
+      }
+    },
+    {
+      match: { title: "MIS建设指南" },
+      update: {
+        title: "企业知识管理系统建设指南",
+        summary: "梳理企业知识管理系统建设的目标、流程和实施要点。",
+        content: "围绕知识采集、审核发布、检索复用、反馈评价和统计分析，形成适合企业内部落地的知识管理建设方法。"
+      }
+    },
+    {
+      match: { title: "中国城乡鸿沟" },
+      update: {
+        title: "客户分层服务策略复盘",
+        summary: "复盘不同客户层级的服务响应策略和改进方向。",
+        content: "根据客户价值、服务频次和问题类型，沉淀分层服务策略，用于指导客服团队优化响应流程和知识复用。"
+      }
+    }
+  ];
+
+  await Knowledge.bulkWrite(replacements.map((item) => ({
+    updateMany: {
+      filter: item.match,
+      update: { $set: item.update }
+    }
+  })));
+
+  await Feedback.updateMany(
+    { comment: "可以作为输入设计样例。" },
+    { $set: { comment: "字段完整，便于团队统一提交规范。" } }
+  );
+  await Feedback.updateMany(
+    { comment: "适合课堂统计展示。" },
+    { $set: { comment: "指标口径适合管理层查看。" } }
+  );
+}
+
 async function resetDemoData() {
   await Promise.all([
     Department.deleteMany({}),
@@ -89,6 +162,7 @@ async function seedDemoData({ reset = false } = {}) {
     const users = await User.countDocuments();
     if (users > 0) {
       ensureSeedAttachmentFiles();
+      await sanitizeDemoKnowledgeTitles();
       await synchronizeKnowledgeCounters();
       return { skipped: true, users };
     }
@@ -141,12 +215,12 @@ async function seedDemoData({ reset = false } = {}) {
   const rows = [
     ["K03-260426-001", "新人入职培训材料整理规范", "统一新员工培训材料的收集、审核和发布方式。", "培训资料由 HR 发起，部门知识管理员补充岗位相关内容，发布后供新员工检索学习。", cat.C03, ["培训", "入职", "制度"], user["hr.employee@example.com"], dept.D01, "approved", 96],
     ["K04-260426-002", "研发接口文档提交模板", "说明接口文档的最小字段与审批规则。", "接口文档必须包含接口地址、请求参数、响应字段、错误码和调用示例，提交后由研发知识管理员审核。", cat.C04, ["接口", "模板", "研发"], user["employee@example.com"], dept.D02, "approved", 148],
-    ["K02-260426-003", "CRM 二期项目复盘", "记录 CRM 二期上线过程中的问题、经验和改进点。", "复盘围绕需求确认、测试验收、用户培训、上线支持四个阶段展开，为后续 MIS 项目实施提供参考。", cat.C02, ["项目复盘", "实施", "CRM"], user["engineer@example.com"], dept.D02, "approved", 122],
+    ["K02-260426-003", "CRM 二期项目复盘", "记录 CRM 二期上线过程中的问题、经验和改进点。", "复盘围绕需求确认、测试验收、用户培训、上线支持四个阶段展开，为后续数字化项目实施提供参考。", cat.C02, ["项目复盘", "实施", "CRM"], user["engineer@example.com"], dept.D02, "approved", 122],
     ["K05-260426-004", "客户投诉处理话术库", "沉淀常见投诉场景下的处理口径。", "客服人员可按场景检索话术，处理完成后补充反馈评价，管理员定期更新。", cat.C05, ["客户服务", "话术", "投诉"], user["marketing@example.com"], dept.D04, "approved", 185],
-    ["K06-260426-005", "月度知识利用率看板说明", "解释统计 Dashboard 的指标口径。", "指标包括知识总量、已发布数量、浏览量、收藏量、评分均值和高频搜索词。", cat.C06, ["统计", "指标", "Dashboard"], user["manager@example.com"], dept.D02, "approved", 80],
+    ["K06-260426-005", "月度知识利用率看板说明", "解释经营分析看板的指标口径。", "指标包括知识总量、已发布数量、浏览量、收藏量、评分均值和高频搜索词。", cat.C06, ["统计", "指标", "经营分析"], user["manager@example.com"], dept.D02, "approved", 80],
     ["K04-260426-006", "生产故障应急处理清单", "一线故障响应流程与记录要求。", "待审核：清单包含告警确认、影响评估、临时止血、根因分析和复盘归档。", cat.C04, ["应急", "运维", "流程"], user["employee@example.com"], dept.D02, "pending", 12],
     ["K02-260426-007", "跨部门协作会议纪要模板", "统一项目会议纪要结构。", "待审核：包含议题、结论、负责人、截止日期和风险提醒。", cat.C02, ["协作", "会议", "模板"], user["engineer@example.com"], dept.D02, "pending", 6],
-    ["K01-260426-008", "知识库命名规则草稿", "说明知识编号与分类编号的编码规则。", "草稿：K + 分类码 + 日期码 + 三位流水号，方便课堂展示系统代码设计。", cat.C01, ["编码", "制度"], user["employee@example.com"], dept.D02, "draft", 0],
+    ["K01-260426-008", "知识库命名规则草稿", "说明知识编号与分类编号的编码规则。", "草稿：K + 分类码 + 日期码 + 三位流水号，便于知识归档、检索追踪和版本管理。", cat.C01, ["编码", "制度"], user["employee@example.com"], dept.D02, "draft", 0],
     ["K03-260426-009", "旧版线下培训签到表", "旧流程资料，保留作历史参考。", "该知识已被新版在线培训流程替代，归档后仍可由管理员查看。", cat.C03, ["归档", "培训"], user["hr.employee@example.com"], dept.D01, "archived", 44],
     ["K05-260426-010", "客户满意度问卷初稿", "因题项不完整被退回修改。", "问卷缺少售后响应速度和知识库自助解决率指标，需补充后再次提交。", cat.C05, ["问卷", "客户"], user["marketing@example.com"], dept.D03, "rejected", 9]
   ];
@@ -165,10 +239,10 @@ async function seedDemoData({ reset = false } = {}) {
       status,
       accessLevel: status === "approved" ? "public" : "department",
       versionNo: status === "approved" ? 2 : 1,
-      versions: status === "approved" ? [{ versionNo: 1, editor: creator._id, note: "Seeded first version.", title, summary, content }] : [],
+      versions: status === "approved" ? [{ versionNo: 1, editor: creator._id, note: "初始版本。", title, summary, content }] : [],
       statusHistory: [
-        { status: "draft", actor: creator._id, comment: "Initial creation." },
-        ...(status !== "draft" ? [{ status, actor: user["manager@example.com"]._id, comment: `Seed status: ${status}.` }] : [])
+        { status: "draft", actor: creator._id, comment: "创建知识条目。" },
+        ...(status !== "draft" ? [{ status, actor: user["manager@example.com"]._id, comment: "知识状态初始化。" }] : [])
       ],
       viewCount,
       favoriteCount: 0,
@@ -188,13 +262,13 @@ async function seedDemoData({ reset = false } = {}) {
     { knowledgeId: knowledge[0]._id, userId: user["employee@example.com"]._id, rating: 5, comment: "适合新人快速理解流程。" },
     { knowledgeId: knowledge[0]._id, userId: user["manager@example.com"]._id, rating: 4, comment: "建议补充岗位差异。" },
     { knowledgeId: knowledge[1]._id, userId: user["engineer@example.com"]._id, rating: 5, comment: "字段要求很清楚。" },
-    { knowledgeId: knowledge[1]._id, userId: user["admin@example.com"]._id, rating: 5, comment: "可以作为输入设计样例。" },
+    { knowledgeId: knowledge[1]._id, userId: user["admin@example.com"]._id, rating: 5, comment: "字段完整，便于团队统一提交规范。" },
     { knowledgeId: knowledge[2]._id, userId: user["decision@example.com"]._id, rating: 4, comment: "复盘对管理决策有参考价值。" },
     { knowledgeId: knowledge[2]._id, userId: user["employee@example.com"]._id, rating: 5, comment: "实施阶段问题总结具体。" },
     { knowledgeId: knowledge[3]._id, userId: user["hr.employee@example.com"]._id, rating: 5, comment: "话术很实用。" },
     { knowledgeId: knowledge[3]._id, userId: user["service.manager@example.com"]._id, rating: 4, comment: "后续增加更多场景。" },
     { knowledgeId: knowledge[4]._id, userId: user["decision@example.com"]._id, rating: 4, comment: "指标口径清楚。" },
-    { knowledgeId: knowledge[4]._id, userId: user["admin@example.com"]._id, rating: 4, comment: "适合课堂统计展示。" }
+    { knowledgeId: knowledge[4]._id, userId: user["admin@example.com"]._id, rating: 4, comment: "指标口径适合管理层查看。" }
   ]);
 
   await Favorite.insertMany([
@@ -206,6 +280,7 @@ async function seedDemoData({ reset = false } = {}) {
   ]);
 
   await synchronizeKnowledgeCounters();
+  await sanitizeDemoKnowledgeTitles();
 
   await SearchLog.insertMany(["接口", "模板", "复盘", "统计", "审核", "客户", "培训", "话术", "运维", "知识利用率"].map((keyword, index) => ({
     userId: users[index % users.length]._id,
@@ -217,4 +292,4 @@ async function seedDemoData({ reset = false } = {}) {
   return { skipped: false, users: users.length, knowledge: knowledge.length };
 }
 
-module.exports = { seedDemoData, resetDemoData, synchronizeKnowledgeCounters, password };
+module.exports = { seedDemoData, resetDemoData, sanitizeDemoKnowledgeTitles, synchronizeKnowledgeCounters, password };

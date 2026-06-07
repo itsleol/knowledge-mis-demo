@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Archive, Edit, Eye, Heart, MessageSquare } from "lucide-react";
+import { Archive, CheckCircle2, Edit, Eye, FileKey2, GitBranch, Heart, MessageSquare, Star } from "lucide-react";
 import { api, roleLabels } from "../services/api";
 import StatusBadge from "../components/StatusBadge";
 import PageHeader from "../components/PageHeader";
@@ -51,9 +51,9 @@ export default function KnowledgeDetail({ user }) {
   return (
     <>
       <PageHeader
-        eyebrow={item.knowledgeCode}
+        eyebrow="知识详情"
         title={item.title}
-        description={`${item.category?.name || "未分类"} · ${item.department?.name || "未分配部门"}`}
+        description={`${item.knowledgeCode} · ${item.category?.name || "未分类"} · ${item.department?.name || "未分配部门"}`}
         actions={
           <div className="button-row">
             <Button variant="ghost" onClick={favorite}><Heart size={16} />{data.isFavorite ? "取消收藏" : "收藏"}</Button>
@@ -62,6 +62,33 @@ export default function KnowledgeDetail({ user }) {
           </div>
         }
       />
+      <div className="knowledge-snapshot-grid">
+        <div className="knowledge-snapshot-card">
+          <FileKey2 size={18} />
+          <span>知识编号</span>
+          <strong>{item.knowledgeCode}</strong>
+        </div>
+        <div className="knowledge-snapshot-card">
+          <GitBranch size={18} />
+          <span>当前版本</span>
+          <strong>V{String(item.versionNo || 1).padStart(2, "0")}</strong>
+        </div>
+        <div className="knowledge-snapshot-card">
+          <CheckCircle2 size={18} />
+          <span>审核记录</span>
+          <strong>{data.reviews?.length || 0} 条</strong>
+        </div>
+        <div className="knowledge-snapshot-card">
+          <Star size={18} />
+          <span>用户评分</span>
+          <strong>{item.averageRating || 0}</strong>
+        </div>
+        <div className="knowledge-snapshot-card">
+          <Eye size={18} />
+          <span>浏览量</span>
+          <strong>{item.viewCount || 0}</strong>
+        </div>
+      </div>
       <div className="detail-layout">
         <article className="panel readable">
           {data.latestReview && ["rejected", "approved"].includes(item.status) && (
@@ -78,14 +105,16 @@ export default function KnowledgeDetail({ user }) {
           <h2>附件</h2>
           <AttachmentList files={item.attachments || []} />
         </article>
-        <MetadataPanel title="知识元信息">
+        <MetadataPanel title="知识档案">
           <MetadataItem label="状态"><StatusBadge status={item.status} /></MetadataItem>
+          <MetadataItem label="知识编号">{item.knowledgeCode}</MetadataItem>
           <MetadataItem label="创建人">{item.creator?.name || "-"}</MetadataItem>
           <MetadataItem label="部门">{item.department?.name || "-"}</MetadataItem>
           <MetadataItem label="分类">{item.category?.name || "-"}</MetadataItem>
-          <MetadataItem label="版本">V{String(item.versionNo || 1).padStart(2, "0")}</MetadataItem>
+          <MetadataItem label="版本号">V{String(item.versionNo || 1).padStart(2, "0")}</MetadataItem>
           <MetadataItem label="浏览量"><span className="meta-line"><Eye size={14} /> {item.viewCount || 0}</span></MetadataItem>
-          <MetadataItem label="平均评分">{item.averageRating || 0}</MetadataItem>
+          <MetadataItem label="用户评分">{item.averageRating || 0}</MetadataItem>
+          <MetadataItem label="审核记录">{data.reviews?.length || 0} 条</MetadataItem>
           <MetadataItem label="标签"><div className="tags">{item.tags?.map((tag) => <span key={tag}>{tag}</span>)}</div></MetadataItem>
         </MetadataPanel>
       </div>

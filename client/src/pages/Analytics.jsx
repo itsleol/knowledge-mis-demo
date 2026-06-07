@@ -33,18 +33,18 @@ export default function Analytics() {
         title="统计分析"
       />
       <div className="metric-grid">
-        <StatCard label="知识总数" value={overview.total} detail="全状态知识资产" />
-        <StatCard label="已发布" value={overview.approved} detail="可检索可复用" />
-        <StatCard label="待审核" value={overview.pending} detail="经理待处理" />
-        <StatCard label="归档" value={overview.archived} detail="历史沉淀" />
-        <StatCard label="总浏览量" value={overview.totalViews} detail="知识利用情况" />
-        <StatCard label="平均评分" value={overview.averageRating} detail="用户反馈均值" />
+        <StatCard label="知识总量" value={overview.total} detail="全状态知识" />
+        <StatCard label="已发布知识" value={overview.approved} detail="可检索可复用" />
+        <StatCard label="待审核知识" value={overview.pending} detail="等待审核发布" />
+        <StatCard label="归档知识" value={overview.archived} detail="历史知识保留" />
+        <StatCard label="累计复用" value={overview.totalViews} detail="浏览访问次数" />
+        <StatCard label="用户评分" value={overview.averageRating} detail="反馈均值" />
       </div>
       <div className="split">
-        <DashboardWidget title="部门知识贡献排行">
+        <DashboardWidget title="部门知识贡献">
           {departments.map((row) => <Bar key={row._id} label={row.departmentName} value={row.total} max={Math.max(...departments.map((d) => d.total), 1)} detail={`已发布 ${row.approved} · 浏览 ${row.views}`} />)}
         </DashboardWidget>
-        <DashboardWidget title="状态分布">
+        <DashboardWidget title="知识状态分布">
           {overview.statusDistribution.map((row) => <Bar key={row.status} label={statusLabels[row.status]} value={row.count} max={overview.total} />)}
         </DashboardWidget>
       </div>
@@ -52,7 +52,7 @@ export default function Analytics() {
         <DashboardWidget title="热门知识 Top 5">
           {hot.map((item) => <div className="rank-row" key={item._id}><strong>{item.title}</strong><span>浏览 {item.viewCount} · 评分 {item.averageRating}</span></div>)}
         </DashboardWidget>
-        <DashboardWidget title="高频搜索词 Top 10">
+        <DashboardWidget title="检索需求热点 Top 10">
           {keywords.map((item) => <div className="rank-row" key={item.keyword}><strong>{item.keyword}</strong><span>{item.count} 次</span></div>)}
         </DashboardWidget>
       </div>

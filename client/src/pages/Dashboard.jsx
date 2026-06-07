@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BarChart3, BookOpen, ClipboardCheck, Search } from "lucide-react";
-import { api, roleLabels } from "../services/api";
+import { api } from "../services/api";
 import PageHeader from "../components/PageHeader";
 import DashboardWidget, { StatCard } from "../components/DashboardWidget";
 
@@ -26,21 +26,23 @@ export default function Dashboard({ user }) {
   return (
     <>
       <PageHeader
-        eyebrow="工作台"
-        title="首页"
+        eyebrow="知识工作台"
+        title="组织知识概览"
       />
       <div className="quick-grid">
-        <Link className="quick-card" to="/knowledge"><BookOpen /><div><strong>知识库检索</strong><span>搜索、筛选和阅读已发布知识</span></div></Link>
-        {user.role !== "decision_maker" && <Link className="quick-card" to="/knowledge/new"><Search /><div><strong>提交知识</strong><span>创建草稿并提交部门审核</span></div></Link>}
-        {user.role === "knowledge_manager" && <Link className="quick-card" to="/reviews"><ClipboardCheck /><div><strong>审核任务</strong><span>处理本部门待审核知识</span></div></Link>}
-        {canAnalytics && <Link className="quick-card" to="/analytics"><BarChart3 /><div><strong>统计分析</strong><span>查看知识资产与利用情况</span></div></Link>}
+        <Link className="quick-card" to="/knowledge"><BookOpen /><div><strong>知识库</strong><span>检索已发布知识</span></div></Link>
+        {user.role !== "decision_maker" && <Link className="quick-card" to="/knowledge/new"><Search /><div><strong>采集新知识</strong><span>提交经验与文档</span></div></Link>}
+        {user.role === "knowledge_manager" && <Link className="quick-card" to="/reviews"><ClipboardCheck /><div><strong>审核管理</strong><span>处理待发布知识</span></div></Link>}
+        {canAnalytics && <Link className="quick-card" to="/analytics"><BarChart3 /><div><strong>统计分析</strong><span>查看知识利用数据</span></div></Link>}
       </div>
       {overview && (
         <div className="metric-grid">
-          <StatCard label="知识总数" value={overview.total} detail="组织知识资产" />
-          <StatCard label="已发布" value={overview.approved} detail="可被检索复用" />
-          <StatCard label="待审核" value={overview.pending} detail="需要及时处理" />
-          <StatCard label="总浏览量" value={overview.totalViews} detail="知识利用情况" />
+          <StatCard label="知识总量" value={overview.total} detail="全状态知识" />
+          <StatCard label="已发布知识" value={overview.approved} detail="可检索可复用" />
+          <StatCard label="待审核知识" value={overview.pending} detail="等待审核发布" />
+          <StatCard label="归档知识" value={overview.archived} detail="历史知识保留" />
+          <StatCard label="累计复用" value={overview.totalViews} detail="浏览访问次数" />
+          <StatCard label="用户评分" value={overview.averageRating} detail="反馈均值" />
         </div>
       )}
       <DashboardWidget title="热门知识推荐">

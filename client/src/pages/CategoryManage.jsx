@@ -62,8 +62,8 @@ export default function CategoryManage() {
   return (
     <>
       <PageHeader
-        eyebrow="知识组织"
-        title="分类与标签管理"
+        eyebrow="知识管理"
+        title="知识组织体系"
       />
       <div className="split">
         <form className="dashboard-widget form-panel" onSubmit={save}>
@@ -85,7 +85,7 @@ export default function CategoryManage() {
         <div className="stack">
           <section className="dashboard-widget">
             <div className="widget-header">
-              <h2>分类体系</h2>
+              <h2>知识分类体系</h2>
             </div>
             <div className="category-tree">
               {roots.map((root) => (
@@ -99,7 +99,7 @@ export default function CategoryManage() {
             </div>
             <DataTable className="category-table">
             <table>
-              <thead><tr><th>代码</th><th>名称</th><th>上级</th><th>操作</th></tr></thead>
+              <thead><tr><th>分类代码</th><th>分类名称</th><th>上级节点</th><th>操作</th></tr></thead>
               <tbody>
                 {items.map((item) => (
                   <tr key={item._id}>
@@ -119,7 +119,7 @@ export default function CategoryManage() {
 
           <section className="dashboard-widget">
             <div className="widget-header">
-              <h2>标签汇总</h2>
+              <h2>热门主题标签</h2>
             </div>
             <div className="tag-summary-grid">
               {tags.map((item) => (

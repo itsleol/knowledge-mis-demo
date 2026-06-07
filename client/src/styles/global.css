@@ -721,6 +721,39 @@ button {
   align-items: start;
 }
 
+.knowledge-snapshot-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(120px, 1fr));
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.knowledge-snapshot-card {
+  display: grid;
+  gap: 5px;
+  padding: var(--space-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.knowledge-snapshot-card svg {
+  color: var(--color-primary);
+}
+
+.knowledge-snapshot-card span {
+  color: var(--color-steel);
+  font-size: var(--text-micro);
+  font-weight: 700;
+}
+
+.knowledge-snapshot-card strong {
+  color: var(--color-ink-deep);
+  font-size: var(--text-heading-4);
+  line-height: 1.2;
+}
+
 .readable {
   max-width: var(--layout-detail-max);
   line-height: 1.72;
@@ -1533,6 +1566,7 @@ button {
   .department-form,
   .feedback-form,
   .detail-layout,
+  .knowledge-snapshot-grid,
   .template-panel,
   .login-page {
     grid-template-columns: 1fr;
