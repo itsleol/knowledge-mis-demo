@@ -2,10 +2,13 @@ process.env.JWT_SECRET = process.env.JWT_SECRET || "test_secret";
 process.env.JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1h";
 
 const assert = require("node:assert/strict");
+const fs = require("node:fs/promises");
+const path = require("node:path");
 const { before, beforeEach, after, test } = require("node:test");
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const app = require("../src/app");
+const { uploadDir } = require("../src/config");
 
 const Category = require("../src/models/Category");
 const Department = require("../src/models/Department");
@@ -34,6 +37,18 @@ async function request(path, { token, method = "GET", body } = {}) {
       ...(token ? { Authorization: `Bearer ${token}` } : {})
     },
     body: body ? JSON.stringify(body) : undefined
+  });
+  const data = await res.json().catch(() => ({}));
+  return { res, data };
+}
+
+async function requestForm(path, { token, method = "POST", form } = {}) {
+  const res = await fetch(`${baseUrl}/api${path}`, {
+    method,
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    },
+    body: form
   });
   const data = await res.json().catch(() => ({}));
   return { res, data };
@@ -338,4 +353,24 @@ test("tag summary aggregates approved knowledge tags and respects manager depart
   const managerFlowTag = managerSummary.data.items.find((item) => item.tag === "流程");
   assert.equal(managerFlowTag.count, 2);
   assert.ok(!managerSummary.data.items.some((item) => item.tag === "跨部门"));
+});
+
+test("upload endpoint stores attachments with business file names and decoded Chinese original names", async () => {
+  const token = await login("employee.test@example.com");
+  const form = new FormData();
+  form.append("knowledgeTitle", "研发接口规范");
+  form.append("existingAttachmentCount", "2");
+  form.append("files", new Blob(["PDF placeholder"], { type: "application/pdf" }), "接口说明文档.pdf");
+
+  const upload = await requestForm("/uploads", { token, form });
+  assert.equal(upload.res.status, 201);
+  assert.equal(upload.data.items.length, 1);
+
+  const [item] = upload.data.items;
+  assert.match(item.fileName, /^研发接口规范-附件-03-\d{10}-接口说明文档\.pdf$/);
+  assert.equal(item.originalName, item.fileName);
+  assert.ok(!item.fileName.includes("�"));
+  assert.equal(item.path, `/uploads/${item.fileName}`);
+
+  await fs.unlink(path.join(uploadDir, item.fileName)).catch(() => {});
 });

@@ -6,7 +6,7 @@
 - 后端: Node.js + Express
 - 数据库: MongoDB + Mongoose
 - 验证: JSON Web Token (JWT)
-- 上传: multer + local `server/uploads`
+- 上传: multer + local `server/uploads`，Word 附件通过 LibreOffice 生成 PDF 预览副本
 - 部署: Docker Compose
 
 ## UI Design Reference
@@ -463,12 +463,15 @@ JWT 的用途是解决身份认证问题，RBAC 的用途是解决权限分配�
 
 **multer** 是 Express 生态中常用的文件上传中间件，用于接收前端上传的附件。用户在提交知识时，可以上传 PDF、Word、PPT、图片等文件。后端接收到文件后，将文件保存到本地的 `server/uploads` 目录，并将文件的元数据保存到 MongoDB 中。
 
+对 Word 附件，系统采用“原文件归档 + PDF 预览副本”的策略：上传的 `.doc` / `.docx` 原文件用于下载留存，后端在 Docker server 镜像中调用 LibreOffice headless 将其转换为 PDF，并在附件元数据中保存 `previewPath`。前端预览时优先打开 PDF 副本，下载时仍下载原始 Word 文件。
+
 上传流程如下：
 
 ```text
 前端选择文件
     -> 调用 POST /api/uploads
     -> multer 接收并保存文件
+    -> Word 附件生成 PDF 预览副本
     -> 返回文件名、大小、类型、路径等信息
     -> 知识条目保存附件元数据
 ```

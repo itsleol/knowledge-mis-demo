@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Download, Eye, FileText, Trash2, X } from "lucide-react";
+import { Download, Eye, FileText, Minus, Plus, RotateCcw, Trash2, X } from "lucide-react";
 import { API_ORIGIN } from "../services/api";
 import Button from "./Button";
 
@@ -7,6 +7,12 @@ function fileUrl(file) {
   if (!file?.path) return "";
   if (/^https?:\/\//.test(file.path)) return file.path;
   return `${API_ORIGIN}${file.path}`;
+}
+
+function previewUrl(file) {
+  if (!file?.previewPath) return fileUrl(file);
+  if (/^https?:\/\//.test(file.previewPath)) return file.previewPath;
+  return `${API_ORIGIN}${file.previewPath}`;
 }
 
 function formatBytes(size = 0) {
@@ -17,7 +23,7 @@ function formatBytes(size = 0) {
 }
 
 function canPreview(file) {
-  return file?.type?.startsWith("image/") || file?.type === "application/pdf" || file?.type === "text/plain";
+  return Boolean(file?.previewPath) || file?.type?.startsWith("image/") || file?.type === "application/pdf" || file?.type === "text/plain";
 }
 
 function typeLabel(file) {
@@ -32,6 +38,21 @@ function typeLabel(file) {
 
 export default function AttachmentList({ files = [], editable = false, onRemove }) {
   const [preview, setPreview] = useState(null);
+  const [imageZoom, setImageZoom] = useState(1);
+
+  function openPreview(file) {
+    setPreview(file);
+    setImageZoom(1);
+  }
+
+  function closePreview() {
+    setPreview(null);
+    setImageZoom(1);
+  }
+
+  function changeZoom(delta) {
+    setImageZoom((value) => Math.min(3, Math.max(0.5, Number((value + delta).toFixed(1)))));
+  }
 
   if (!files.length) return <div className="empty compact-empty">暂无附件</div>;
 
@@ -47,7 +68,7 @@ export default function AttachmentList({ files = [], editable = false, onRemove 
             </div>
             <div className="attachment-actions">
               {canPreview(file) && (
-                <Button type="button" variant="ghost" className="icon-only" onClick={() => setPreview(file)} title="预览附件">
+                <Button type="button" variant="ghost" className="icon-only" onClick={() => openPreview(file)} title="预览附件">
                   <Eye size={16} />
                 </Button>
               )}
@@ -72,15 +93,35 @@ export default function AttachmentList({ files = [], editable = false, onRemove 
                 <strong>{preview.originalName || preview.fileName}</strong>
                 <span>{typeLabel(preview)} · {formatBytes(preview.size)}</span>
               </div>
-              <Button type="button" variant="ghost" className="icon-only" onClick={() => setPreview(null)} title="关闭预览">
-                <X size={18} />
-              </Button>
+              <div className="preview-actions">
+                {preview.type?.startsWith("image/") && !preview.previewPath && (
+                  <div className="image-zoom-controls" aria-label="图片缩放">
+                    <Button type="button" variant="ghost" className="icon-only" onClick={() => changeZoom(-0.1)} title="缩小图片" disabled={imageZoom <= 0.5}>
+                      <Minus size={16} />
+                    </Button>
+                    <span>{Math.round(imageZoom * 100)}%</span>
+                    <Button type="button" variant="ghost" className="icon-only" onClick={() => changeZoom(0.1)} title="放大图片" disabled={imageZoom >= 3}>
+                      <Plus size={16} />
+                    </Button>
+                    <Button type="button" variant="ghost" className="icon-only" onClick={() => setImageZoom(1)} title="重置缩放">
+                      <RotateCcw size={16} />
+                    </Button>
+                  </div>
+                )}
+                <Button type="button" variant="ghost" className="icon-only" onClick={closePreview} title="关闭预览">
+                  <X size={18} />
+                </Button>
+              </div>
             </div>
-            <div className="preview-body">
-              {preview.type?.startsWith("image/") ? (
-                <img src={fileUrl(preview)} alt={preview.originalName || "附件预览"} />
+            <div className={`preview-body ${preview.type?.startsWith("image/") && !preview.previewPath ? "preview-body-image" : ""}`}>
+              {preview.type?.startsWith("image/") && !preview.previewPath ? (
+                <img
+                  src={previewUrl(preview)}
+                  alt={preview.originalName || "附件预览"}
+                  style={{ width: `${imageZoom * 100}%` }}
+                />
               ) : (
-                <iframe title={preview.originalName || "附件预览"} src={fileUrl(preview)} />
+                <iframe title={preview.originalName || "附件预览"} src={previewUrl(preview)} />
               )}
             </div>
           </div>

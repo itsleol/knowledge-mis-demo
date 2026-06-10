@@ -10,7 +10,6 @@ import {
   LogOut,
   PenSquare,
   Settings,
-  ShieldCheck,
   Users
 } from "lucide-react";
 import { roleLabels, setToken } from "../services/api";
@@ -74,7 +73,7 @@ export default function Layout({ user, onLogout }) {
     <div className="shell">
       <aside className="sidebar">
         <div className="brand">
-          <div className="brand-mark"><ShieldCheck size={22} /></div>
+          <img src="/logo.jpg" alt="知识管理系统 Logo" className="brand-logo" />
           <div>
             <strong>知识管理 MIS</strong>
             <span>组织知识工作台</span>

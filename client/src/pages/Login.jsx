@@ -34,8 +34,13 @@ export default function Login({ onLogin }) {
   return (
     <div className="login-page">
       <section className="login-intro">
-        <span className="page-eyebrow">企业知识管理平台</span>
-        <h1>企业知识管理系统</h1>
+        <div className="login-brand-row">
+          <img src="/logo.jpg" alt="企业知识管理系统 Logo" className="login-logo" />
+          <div>
+            <span className="page-eyebrow">企业知识管理平台</span>
+            <h1>企业知识管理系统</h1>
+          </div>
+        </div>
         <p>统一沉淀组织知识，规范审核发布流程，提升检索与复用效率。</p>
         <div className="login-feature-list">
           <div className="login-feature"><BookOpenCheck size={20} /><strong>知识沉淀</strong><span>文档沉淀、附件管理、分类标签、版本追踪</span></div>

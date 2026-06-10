@@ -7,6 +7,8 @@ const attachmentSchema = new mongoose.Schema(
     type: String,
     size: Number,
     path: String,
+    previewPath: String,
+    previewType: String,
     uploadedAt: { type: Date, default: Date.now }
   },
   { _id: false }
