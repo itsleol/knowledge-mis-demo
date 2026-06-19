@@ -139,7 +139,7 @@
 
 - 当前没有后端 API 测试、前端组件测试、E2E 测试。
 - 没有测试数据库策略，若直接测试当前 MongoDB volume，可能污染演示数据。
-- 缺少 `docs/TESTING.md`，团队成员不知道如何验证改动。
+- 缺少测试说明文档，团队成员不知道如何验证改动。
 
 ### 4.7 Deployment Defects
 
@@ -187,7 +187,7 @@
 3. 修正文档与数据一致性：
    - README API 列表补 `DELETE /api/users/:id`。
    - README 增加测试运行命令和推荐课堂演示路径。
-   - 新增 `docs/TESTING.md`。
+   - 新增 `docs/guides/TESTING.md`。
    - 将 seed 中 admin 审核记录改为 knowledge_manager，或在 seed 注释中说明为历史迁移数据。
 
 4. 统一核心错误信息：
@@ -279,7 +279,7 @@
 - 已将 `server/src/seed/demoData.js` 中 system_admin 审核记录改为 knowledge_manager 审核记录，使 seed data 与“系统管理员负责运维，不负责知识审核”的角色分工保持一致。
 - 已对 `server/src/controllers/analyticsController.js` 做最小修复：knowledge_manager 查看 overview、department stats、hot knowledge 和 search keywords 时限定在本部门相关数据范围内；system_admin 和 decision_maker 保持全局统计视图。
 - 已同步 `README.md`，补充 `DELETE /api/users/:id`、测试运行命令、核心闭环和推荐课堂演示路径。
-- 已新增 `docs/TESTING.md`，说明测试框架、运行方式、数据库安全策略、覆盖范围和后续未覆盖项目。
+- 已新增 `docs/guides/TESTING.md`，说明测试框架、运行方式、数据库安全策略、覆盖范围和后续未覆盖项目。
 
 第二轮测试结果：
 
@@ -309,7 +309,7 @@ fail 0
 - 已在知识新建/编辑页增加轻量静态模板：项目复盘模板、培训资料模板、制度文档模板，用于展示“模板套用”的采集辅助能力。
 - 已调整 seed 附件策略：seed 脚本会生成真实 `.txt` 占位文件，使 seed 附件路径可访问，避免课堂演示中出现 404。
 - 已新增前端 smoke 测试 `client/tests/smoke.test.js` 和 `npm run test:smoke`，用于验证 Vite SPA 关键路由入口可访问。
-- 已新增 `docs/DEMO_SCRIPT.md` 和 `docs/RELEASE_CHECKLIST.md`，补强课堂展示路径和展示前检查流程。
+- 已新增 `docs/guides/DEMO_SCRIPT.md` 和 `docs/guides/RELEASE_CHECKLIST.md`，补强课堂展示路径和展示前检查流程。
 
 第三轮仍保留为未来扩展的项目：
 

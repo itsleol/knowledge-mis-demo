@@ -24,22 +24,42 @@
 - 新建/编辑知识页新增三个静态知识模板：项目复盘、培训资料、制度文档。
 - seed 脚本会生成真实 `.txt` 附件占位文件，避免 seed 附件点击 404。
 - 新增前端 smoke 检查命令，验证关键前端路由可访问。
-- 新增 [`docs/DEMO_SCRIPT.md`](./docs/DEMO_SCRIPT.md) 和 [`docs/RELEASE_CHECKLIST.md`](./docs/RELEASE_CHECKLIST.md)，用于课堂演示和展示前检查。
+- 新增 [`docs/guides/DEMO_SCRIPT.md`](./docs/guides/DEMO_SCRIPT.md) 和 [`docs/guides/RELEASE_CHECKLIST.md`](./docs/guides/RELEASE_CHECKLIST.md)，用于课堂演示和展示前检查。
 
 ## 项目结构
 
 ```text
 knowledge-mis-demo/
-  client/                 React + Vite 前端
-  server/                 Express API 与 seed script
-    src/models/           MongoDB 文档模型
-    src/controllers/      API 业务逻辑
-    src/routes/           RESTful 路由
-    src/seed/seed.js      Demo 数据
-    uploads/              本地附件
-  docker-compose.yml
-  .env.example
-  CONTRIBUTING.md         团队协作指引
+├── client/                         React + Vite 前端
+│   ├── public/                     静态资源与运行时 Logo
+│   ├── src/
+│   │   ├── components/             可复用 UI 组件
+│   │   ├── pages/                  登录、知识、审核、统计等页面
+│   │   ├── services/               API 请求封装
+│   │   └── styles/                 设计 tokens 与全局样式
+│   └── tests/                      前端 smoke 测试
+├── server/                         Node.js + Express 后端
+│   ├── src/
+│   │   ├── controllers/            业务控制器
+│   │   ├── middleware/             JWT、RBAC 与错误处理中间件
+│   │   ├── models/                 MongoDB / Mongoose 文档模型
+│   │   ├── routes/                 RESTful API 路由
+│   │   └── seed/                   演示数据初始化
+│   ├── tests/                      后端 API 集成测试
+│   └── uploads/                    本地附件目录（仅提交 .gitkeep）
+├── docs/
+│   ├── assets/branding/            品牌原始素材
+│   ├── design-references/          UI 设计参考文件
+│   ├── guides/                     测试、演示、发布与 GitHub 指引
+│   ├── reports/                    系统设计与实施报告
+│   ├── IMPLEMENTATION_AUDIT.md     系统实施审计
+│   └── README.md                   文档目录索引
+├── .env.example                    环境变量示例
+├── .gitignore                      Git 忽略规则
+├── CONTRIBUTING.md                 团队协作规范
+├── DESIGN.md                       前端设计系统规范
+├── docker-compose.yml              本地一键部署编排
+└── README.md                       项目总说明
 ```
 
 ## 依托于Github与Docker的项目团队协作
@@ -168,9 +188,9 @@ npm test
 MONGO_URI_TEST=mongodb://127.0.0.1:27017/km_mis_test npm test
 ```
 
-当前测试覆盖登录、当前用户、知识草稿创建、提交审核校验、部门管理员审核通过/驳回、权限拒绝、知识检索、浏览量、评分均值、收藏/取消收藏、系统管理员用户管理和部门级统计过滤。更多说明见 [`docs/TESTING.md`](./docs/TESTING.md)。
+当前测试覆盖登录、当前用户、知识草稿创建、提交审核校验、部门管理员审核通过/驳回、权限拒绝、知识检索、浏览量、评分均值、收藏/取消收藏、系统管理员用户管理和部门级统计过滤。更多说明见 [`docs/guides/TESTING.md`](./docs/guides/TESTING.md)。
 
-前端 smoke 检查使用 Node.js 内置测试工具访问 Vite SPA 的关键路由入口。完整 Playwright 浏览器 E2E 因当前 Docker client 服务使用 Alpine 镜像，浏览器依赖较重，暂保留为后续扩展；课堂展示前可按 [`docs/DEMO_SCRIPT.md`](./docs/DEMO_SCRIPT.md) 进行手工浏览器验证。
+前端 smoke 检查使用 Node.js 内置测试工具访问 Vite SPA 的关键路由入口。完整 Playwright 浏览器 E2E 因当前 Docker client 服务使用 Alpine 镜像，浏览器依赖较重，暂保留为后续扩展；课堂展示前可按 [`docs/guides/DEMO_SCRIPT.md`](./docs/guides/DEMO_SCRIPT.md) 进行手工浏览器验证。
 
 
 ## 登录失败问题排查方案

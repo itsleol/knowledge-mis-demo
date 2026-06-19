@@ -42,3 +42,6 @@ data/
 coverage/
 .cache/
 .vite/
+
+# Generated report rendering and local QA artifacts
+report-output/

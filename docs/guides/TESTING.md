@@ -102,7 +102,7 @@ For this reason, the third round uses:
 
 - backend API integration tests for the full business workflow and permission boundaries;
 - frontend smoke tests for SPA route availability;
-- manual browser verification using [`docs/DEMO_SCRIPT.md`](./DEMO_SCRIPT.md) before classroom presentation.
+- manual browser verification using [`DEMO_SCRIPT.md`](./DEMO_SCRIPT.md) before classroom presentation.
 
 Future Playwright path:
 
